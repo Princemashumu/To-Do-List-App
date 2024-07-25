@@ -1,0 +1,55 @@
+.Container{
+
+    /* background-color:beige ; */
+    height:100vh;
+    width:100vw;
+
+    display: grid;
+    grid-template-rows: .5fr 2fr 2fr;
+    grid-template-areas:"Header"
+                        "Main1"
+                        "Main2";
+                        /* "Main3" */
+                        /* "Footer"; */
+                        gap:1em;
+}
+.Header{
+
+    grid-area: Header;
+}
+.Main1{
+
+    grid-area: Main1;
+    /* display: flex;
+    align-items: center;
+    justify-content: center; */
+}
+.Main2{
+
+    grid-area: Main2;
+}
+.Main3{
+
+    grid-area: Main3;
+}
+.Footer{
+
+    grid-area: Footer;
+}
+.css-zi2fkb-MuiContainer-root{
+    /* display: flex; */
+    align-content: center;
+    justify-content: first baseline;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: xx-large;
+    color: #009fe9;
+    font-size: 2em;
+    margin: .67em 0;
+    letter-spacing: -2;
+    line-height: 1.1;
+    text-decoration-color: #21ff21;
+}
+.Container TextDeco{
+
+    text-decoration: wavy solid red 50%;
+}
