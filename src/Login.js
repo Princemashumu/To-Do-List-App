@@ -97,6 +97,12 @@ const Login = () => {
           alignItems="center"
           justifyContent="center"
           minHeight="100vh"
+          sx={{
+            backgroundColor: 'beige',
+            padding: '20px',
+            borderRadius: '10px',
+            boxShadow: '0 3px 5px rgba(0,0,0,0.2)'
+          }}
         >
           <Typography variant="h4">Login</Typography>
           {error && <Alert severity="error">{error}</Alert>}

@@ -56,42 +56,6 @@ const Signup = () => {
             <strong>T</strong>oDo
           </Typography>
           <Link to ="/Login">
-          {/* <Button
-            color="inherit"
-            component={Link} 
-            to="/Login"
-            sx={{
-              borderRadius: '20px',
-              margin: '0 5px',
-              border: '2px solid #fff',
-              '&:hover': {
-                backgroundColor: '#fff',
-                color: '#333',
-                borderColor: '#fff'
-              }
-            }}
-          >
-            Login
-          </Button>
-          </Link>
-          <Link to ="/Signup">
-          <Button
-            color="inherit"
-            // component={Link to} 
-            // to="/Signup"
-            sx={{
-              borderRadius: '20px',
-              margin: '0 5px',
-              border: '2px solid #fff',
-              '&:hover': {
-                backgroundColor: '#fff',
-                color: '#333',
-                borderColor: '#fff'
-              }
-            }}
-          >
-            Signup
-          </Button> */}
           </Link>
         </Toolbar>
       </AppBar>
@@ -102,6 +66,12 @@ const Signup = () => {
           alignItems="center"
           justifyContent="center"
           minHeight="100vh"
+          sx={{
+            backgroundColor: 'beige',
+            padding: '20px',
+            borderRadius: '10px',
+            boxShadow: '0 3px 5px rgba(0,0,0,0.2)'
+          }}
         >
           <Typography variant="h4">Signup</Typography>
           {error && <Alert severity="error">{error}</Alert>}
