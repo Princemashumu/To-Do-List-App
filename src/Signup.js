@@ -75,7 +75,7 @@ const Signup = () => {
             backgroundColor: 'beige',
             padding: '20px',
             borderRadius: '10px',
-            boxShadow: '0 3px 5px rgba(0,0,0,0.2)'
+            boxShadow: '0 3px 5px rgba(0,0,0,5)'
           }}
         >
           <Typography variant="h4">Signup</Typography>
@@ -116,7 +116,7 @@ const Signup = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
             <Button type="submit" variant="contained" color="primary" fullWidth>
-              Signup
+              Create Account
             </Button>
           </form>
           <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
