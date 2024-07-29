@@ -32,9 +32,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
 import './App.css';
 
-
-
-
 const Home = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [task, setTask] = useState('');
@@ -174,160 +171,139 @@ const Home = () => {
 
   return (
     <>
-    <AppBar position="static"sx={{
-      backgroundColor:'black', 
-      display:'flex',
-      justifyContent:'space-between',
-      flexGrow:1
-      }}>
-    <Toolbar>
+      <AppBar position="static" sx={{ backgroundColor: 'black' }}>
+        <Toolbar>
           <IconButton
             edge="start"
-            justifyContent='space-between'
             color="inherit"
             aria-label="menu"
             onClick={toggleDrawer(true)}
           >
-            <MenuIcon  />
-
+            <MenuIcon />
           </IconButton>
-          <div>
-            <IconButton
-              edge="end"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleMenu}
-              color="inherit"
-              sx={{ flexGrow: 1 }}
-              
-            >
-            </IconButton>
-            <TextField 
+          <Box sx={{ flexGrow: 1 }} />
+          <TextField
             label="Search Tasks"
             variant="outlined"
             size="small"
             value={searchQuery}
             onChange={handleSearch}
-            sx={{ backgroundColor: 'white', borderRadius: '5px'}}
+            sx={{ backgroundColor: 'white', borderRadius: '5px' }}
           />
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-            >
-              <MenuItem onClick={() => handleMenuClick('Sign Out')}>Sign Out</MenuItem>
-              
-              {/* <AccountCircle /> */}
-            </Menu>
-          </div>
+          <IconButton
+            edge="end"
+            aria-label="account of current user"
+            aria-controls="menu-appbar"
+            aria-haspopup="true"
+            onClick={handleMenu}
+            color="inherit"
+          >
+            {/* Add account icon or other relevant icon here if needed */}
+          </IconButton>
+          <Menu
+            id="menu-appbar"
+            anchorEl={anchorEl}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+          >
+            <MenuItem onClick={() => handleMenuClick('Sign Out')}>Sign Out</MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
-    <Container maxWidth="sm">
-      <AppBar position="static">
-        
-      </AppBar>
-      <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-        minHeight="100vh"
-      >
-        <Typography variant="h3" align="center">
-        </Typography>
-        <Drawer open={drawerOpen} onClose={toggleDrawer(false)}>
-          {list()}
-        </Drawer>
-        <Box mt={4} width="100%">
-          <form onSubmit={handleTaskSubmit}>
-            <TextField
-              label="New Task"
-              variant="outlined"
-              fullWidth
-              value={task}
-              onChange={(e) => setTask(e.target.value)}
-            />
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              sx={{ mt: 2 }}
-            >
-              {editTaskId ? 'Update Task' : 'Add Task'}
-            </Button>
-          </form>
+      <Container maxWidth="sm">
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          minHeight="100vh"
+        >
+          <Typography variant="h3" align="center">
+            {/* Add a title if necessary */}
+          </Typography>
+          <Drawer open={drawerOpen} onClose={toggleDrawer(false)}>
+            {list()}
+          </Drawer>
           <Box mt={4} width="100%">
-            {/* <TextField
-              label="Search Tasks"
-              variant="outlined"
-              fullWidth
-              value={searchQuery}
-              onChange={handleSearch}
-              sx={{ mb: 2 }}
-            /> */}
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              width="100%"
-            >
-              <TableContainer component={Paper} sx={{ maxWidth: 600 }}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Task</TableCell>
-                      <TableCell align="right">Actions</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {tasks.map((task) => (
-                      <TableRow key={task.id}>
-                        <TableCell>{task.task}</TableCell>
-                        <TableCell align="right">
-                          <IconButton
-                            color="primary"
-                            onClick={() => handleEditTask(task)}
-                          >
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton
-                            color="secondary"
-                            onClick={() => handleDeleteTask(task.id)}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </TableCell>
+            <form onSubmit={handleTaskSubmit}>
+              <TextField
+                label="New Task"
+                variant="outlined"
+                fullWidth
+                value={task}
+                onChange={(e) => setTask(e.target.value)}
+              />
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                sx={{ mt: 2 }}
+              >
+                {editTaskId ? 'Update Task' : 'Add Task'}
+              </Button>
+            </form>
+            <Box mt={4} width="100%">
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                width="100%"
+              >
+                <TableContainer component={Paper} sx={{ maxWidth: 600 }}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Task</TableCell>
+                        <TableCell align="right">Actions</TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                    </TableHead>
+                    <TableBody>
+                      {tasks.map((task) => (
+                        <TableRow key={task.id}>
+                          <TableCell>{task.task}</TableCell>
+                          <TableCell align="right">
+                            <IconButton
+                              color="primary"
+                              onClick={() => handleEditTask(task)}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                            <IconButton
+                              color="secondary"
+                              onClick={() => handleDeleteTask(task.id)}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Box>
             </Box>
           </Box>
         </Box>
-      </Box>
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert onClose={handleSnackbarClose} severity="success">
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
-    </Container>
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={6000}
+          onClose={handleSnackbarClose}
+        >
+          <Alert onClose={handleSnackbarClose} severity="success">
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
+      </Container>
     </>
   );
 };
