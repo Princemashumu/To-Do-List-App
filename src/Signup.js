@@ -16,6 +16,10 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!username || !email || !password || !confirmPassword) {
+      setError('Please fill out all fields');
+      return;
+    }
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -31,7 +35,7 @@ const Signup = () => {
         navigate('/login');
       }, 1000); // Redirect after 1 second
     } catch (err) {
-      setError('Error signing up');
+      setError('Error registering user');
     }
   };
 
@@ -41,7 +45,6 @@ const Signup = () => {
     }
     setOpen(false);
   };
-
   return (
     <>
       <AppBar position="static" sx={{ backgroundColor: 'black' }}>

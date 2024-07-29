@@ -14,6 +14,10 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!username || !password) {
+      setError('Please fill out all fields');
+      return;
+    }
     try {
       const response = await axios.post('http://localhost:5005/login', {
         username,
@@ -36,7 +40,6 @@ const Login = () => {
     }
     setOpen(false);
   };
-
   return (
     <>
       <AppBar position="static" sx={{ backgroundColor: 'black' }}>
