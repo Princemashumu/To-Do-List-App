@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { TextField, AppBar, Toolbar, Button, Container, Typography, Box, Snackbar, Alert } from '@mui/material';
+import { TextField, AppBar, Toolbar, Button, Container, Typography, Box, Snackbar, Alert,CircularProgress  } from '@mui/material';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import customIcon from './img3.png';
 import IconButton from '@mui/material/IconButton';
+
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [open, setOpen] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -18,18 +20,17 @@ const Login = () => {
       setError('Please fill out all fields');
       return;
     }
+    setLoading(true);
     try {
-      const response = await axios.post('http://localhost:5005/login', {
-        username,
-        password
-      });
-      // Save authentication state (e.g., token) if needed
+      const response = await axios.post('http://localhost:5005/login', { username, password });
       localStorage.setItem('authToken', response.data.token);
       setOpen(true);
       setTimeout(() => {
+        setLoading(false);
         navigate('/');
       }, 1000); // Redirect after 1 second
     } catch (err) {
+      setLoading(false);
       setError('Invalid username or password');
     }
   };
@@ -40,6 +41,7 @@ const Login = () => {
     }
     setOpen(false);
   };
+
   return (
     <>
       <AppBar position="static" sx={{ backgroundColor: 'black' }}>
@@ -133,6 +135,12 @@ const Login = () => {
               Login successful! Redirecting to home...
             </Alert>
           </Snackbar>
+          {loading && (
+            <Box display="flex" alignItems="center" justifyContent="center" mt={2}>
+              <CircularProgress />
+              <img src={customIcon} alt="Loading" style={{ width: 50, height: 50, marginLeft: 10 }} />
+              </Box>
+          )}
         </Box>
       </Container>
     </>

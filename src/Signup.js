@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, AppBar, Toolbar, Button, Container, Typography, Box, Snackbar, Alert, Link } from '@mui/material';
+import { TextField, AppBar, Toolbar, Button, Container, Typography, Box, Snackbar, Alert, Link,CircularProgress } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import customIcon from './img3.png';
@@ -12,6 +12,7 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [open, setOpen] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -24,6 +25,7 @@ const Signup = () => {
       setError('Passwords do not match');
       return;
     }
+    setLoading(true);
     try {
       await axios.post('http://localhost:5005/signup', {
         username,
@@ -32,9 +34,11 @@ const Signup = () => {
       });
       setOpen(true);
       setTimeout(() => {
+        setLoading(false);
         navigate('/login');
       }, 1000); // Redirect after 1 second
     } catch (err) {
+      setLoading(false);
       setError('Error registering user');
     }
   };
@@ -45,6 +49,7 @@ const Signup = () => {
     }
     setOpen(false);
   };
+
   return (
     <>
       <AppBar position="static" sx={{ backgroundColor: 'black' }}>
@@ -119,6 +124,12 @@ const Signup = () => {
               Signup successful! Redirecting to login...
             </Alert>
           </Snackbar>
+          {loading && (
+            <Box display="flex" alignItems="center" justifyContent="center" mt={2}>
+              <CircularProgress />
+              <img src={customIcon} alt="Loading" style={{ width: 50, height: 50, marginLeft: 10 }} />
+            </Box>
+          )}
         </Box>
       </Container>
     </>
