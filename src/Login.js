@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { TextField, Button, Container, Typography, Box, Snackbar, Alert } from '@mui/material';
+import { TextField, AppBar, Toolbar, Button, Container, Typography, Box, Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import customIcon from './img3.png';
+import IconButton from '@mui/material/IconButton';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -36,45 +38,95 @@ const Login = () => {
   };
 
   return (
-    <Container maxWidth="sm">
-      <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-        minHeight="100vh"
-      >
-        <Typography variant="h4">Login</Typography>
-        {error && <Alert severity="error">{error}</Alert>}
-        <form onSubmit={handleSubmit}>
-          <TextField
-            label="Username"
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <TextField
-            label="Password"
-            type="password"
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Button type="submit" variant="contained" color="primary" fullWidth>
+    <>
+      <AppBar position="static" sx={{ backgroundColor: 'black' }}>
+        <Toolbar>
+          <IconButton edge="start" color="inherit" aria-label="menu">
+            <img src={customIcon} alt="custom icon" style={{ width: 30, height: 30 }} />
+          </IconButton>
+          <Typography variant="h6" style={{ flexGrow: 1 }}>
+            <strong>T</strong>oDo
+          </Typography>
+          {/* <Link to ="/Login"> */}
+          {/* <Button
+            color="inherit"
+            component={Link} 
+            to="/Login"
+            sx={{
+              borderRadius: '20px',
+              margin: '0 5px',
+              border: '2px solid #fff',
+              '&:hover': {
+                backgroundColor: '#fff',
+                color: '#333',
+                borderColor: '#fff'
+              }
+            }}
+          >
             Login
+          </Button> */}
+          {/* </Link> */}
+          <Link to ="/Signup">
+          <Button
+            color="inherit"
+            // component={Link to} 
+            // to="/Signup"
+            sx={{
+              borderRadius: '20px',
+              margin: '0 5px',
+              border: '2px solid #fff',
+              '&:hover': {
+                backgroundColor: '#fff',
+                color: '#333',
+                borderColor: '#fff'
+              }
+            }}
+          >
+            Signup
           </Button>
-        </form>
-        <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
-          <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-            Login successful! Redirecting to home...
-          </Alert>
-        </Snackbar>
-      </Box>
-    </Container>
+          </Link>
+        </Toolbar>
+      </AppBar>
+      <Container maxWidth="sm">
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          minHeight="100vh"
+        >
+          <Typography variant="h4">Login</Typography>
+          {error && <Alert severity="error">{error}</Alert>}
+          <form onSubmit={handleSubmit}>
+            <TextField
+              label="Username"
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <TextField
+              label="Password"
+              type="password"
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Button type="submit" variant="contained" color="primary" fullWidth>
+              Login
+            </Button>
+          </form>
+          <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+              Login successful! Redirecting to home...
+            </Alert>
+          </Snackbar>
+        </Box>
+      </Container>
+    </>
   );
 };
 

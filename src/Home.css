@@ -30,3 +30,9 @@
 .Main3{
     grid-area: main3;
 }
+
+.css-hyum1k-MuiToolbar-root{
+
+    display:flex;
+    justify-Content:space-between;
+}
