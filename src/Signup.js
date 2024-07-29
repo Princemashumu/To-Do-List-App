@@ -1,140 +1,103 @@
-// src/pages/Signup.js
-
 import React, { useState } from 'react';
-import { Container, TextField, Button, Typography, Box } from '@mui/material';
+import { TextField, Button, Container, Typography, Box, Snackbar, Alert } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-const Signup = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    dob: '', // Add state for date of birth
-    password: '',
-    confirmPassword:' ',
-  
-  });
+const SignUp = () => {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [open, setOpen] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (password === confirmPassword) {
+      try {
+        await axios.post('http://localhost:5005/signup', {
+          username,
+          email,
+          password
+        });
+        setOpen(true);
+        setTimeout(() => {
+          navigate('/login');
+        }, 3000); // Redirect after 3 seconds
+      } catch (err) {
+        setError('Failed to sign up');
+      }
+    } else {
+      alert('Passwords do not match');
+    }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission logic
-    console.log('Form data:', formData);
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
   };
 
   return (
-    <Container maxWidth="md" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <Box 
-      sx={{ 
-        display: 'flex', 
-        flexDirection: 'column', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        padding: '2rem', 
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Add box shadow
-        borderRadius: '8px', // Add border radius
-        backgroundColor: '#fff', // Add background color
-        width: '100%', // Make the Box take the full width of its container
-        maxWidth: '600px', // Set a maximum width for the Box
-        backgroundImage:'/backgroundimg1.jpg', // Add background image
-        backgroundSize: 'cover', // Ensure the image covers the entire container
-        backgroundPosition: 'center', // Center the background image
-        backgroundRepeat: 'no-repeat' // Do not repeat the background image
-      }}
+    <Container maxWidth="sm">
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        minHeight="100vh"
       >
-        <Box 
-        sx={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'center', 
-          justifyContent: 'center', 
-          padding: '2rem', 
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Add box shadow
-          borderRadius: '8px', // Add border radius
-          backgroundColor: 'rgba(255, 255, 255, 0.9)', // Add background color with opacity
-          width: '100%', // Make the Box take the full width of its container
-          maxWidth: '600px' // Set a maximum width for the Box
-        }}
-      >
-        
-      </Box>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Sign Up
-        </Typography>
-        <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
-          <Box sx={{ marginBottom: '1rem' }}>
-            <TextField
-              fullWidth
-              label="Name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              variant="outlined"
-            />
-          </Box>
-          <Box sx={{ marginBottom: '1rem' }}>
-            <TextField
-              fullWidth
-              label="Email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              variant="outlined"
-            />
-          </Box>
-          <Box sx={{ marginBottom: '1rem' }}>
-            <TextField
-              fullWidth
-              label="Date of Birth"
-              name="dob"
-              type="date"
-              value={formData.dob}
-              onChange={handleChange}
-              variant="outlined"
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Box>
-          <Box sx={{ marginBottom: '1rem' }}>
-            <TextField
-              fullWidth
-              label="Password"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-              variant="outlined"
-            />
-          </Box>
-          <Box sx={{ marginBottom: '1rem' }}>
-            <TextField
-              fullWidth
-              label="Confirm Password"
-              name="Confirmpassword"
-              type="password"
-              value={formData.Confirmpassword}
-              onChange={handleChange}
-              variant="outlined"
-            />
-          </Box>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            sx={{ borderRadius: '20px', padding: '10px 20px', width: '100%' }}
-          >
+        <Typography variant="h4">Sign Up</Typography>
+        {error && <Alert severity="error">{error}</Alert>}
+        <form onSubmit={handleSubmit}>
+          <TextField
+            label="Username"
+            variant="outlined"
+            margin="normal"
+            fullWidth
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <TextField
+            label="Email"
+            variant="outlined"
+            margin="normal"
+            fullWidth
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <TextField
+            label="Password"
+            type="password"
+            variant="outlined"
+            margin="normal"
+            fullWidth
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <TextField
+            label="Confirm Password"
+            type="password"
+            variant="outlined"
+            margin="normal"
+            fullWidth
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+          <Button type="submit" variant="contained" color="primary" fullWidth>
             Sign Up
           </Button>
-        </Box>
+        </form>
+        <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+            Account successfully created! Redirecting to login...
+          </Alert>
+        </Snackbar>
       </Box>
     </Container>
   );
 };
 
-export default Signup;
+export default SignUp;
