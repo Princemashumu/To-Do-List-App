@@ -17,7 +17,7 @@ app.use(cors()); // Create and initialize SQLite database
 
 var db = new sqlite3.Database('./tasks.db');
 db.serialize(function () {
-  db.run('CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, email TEXT, password TEXT)'); // db.run('CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, task TEXT, FOREIGN KEY(user_id) REFERENCES users(id))');
+  db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, email TEXT, password TEXT)'); // db.run('CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, task TEXT, FOREIGN KEY(user_id) REFERENCES users(id))');
 
   db.run("CREATE TABLE IF NOT EXISTS tasks (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    userId TEXT,\n    task TEXT,\n    taskDate TEXT,\n    taskPriority TEXT\n  )");
 });
@@ -88,20 +88,38 @@ app.post('/add-task', function (req, res) {
   });
 }); // Get tasks
 
-app.get('/tasks', function (req, res) {
-  var userId = req.query.userId;
-  var query = "SELECT * FROM tasks WHERE userId = ?";
-  db.all(query, [userId], function (err, rows) {
-    if (err) {
-      return res.status(500).json({
-        message: 'Error fetching tasks'
-      });
-    }
+app.get('/tasks', function _callee(req, res) {
+  var userId, tasks;
+  return regeneratorRuntime.async(function _callee$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          userId = req.query.userId;
+          _context.prev = 1;
+          _context.next = 4;
+          return regeneratorRuntime.awrap(db.all('SELECT * FROM tasks WHERE userId = ?', [userId]));
 
-    res.status(200).json({
-      tasks: rows
-    });
-  });
+        case 4:
+          tasks = _context.sent;
+          res.json({
+            tasks: tasks
+          });
+          _context.next = 11;
+          break;
+
+        case 8:
+          _context.prev = 8;
+          _context.t0 = _context["catch"](1);
+          res.status(500).json({
+            message: 'Error fetching tasks'
+          });
+
+        case 11:
+        case "end":
+          return _context.stop();
+      }
+    }
+  }, null, null, [[1, 8]]);
 }); // Edit task
 
 app.put('/edit-task/:id', function (req, res) {

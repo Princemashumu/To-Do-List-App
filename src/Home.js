@@ -32,7 +32,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
-import './App.css';
+import Profile from './Profile'; // Import Profile component
 
 const Home = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -45,6 +45,8 @@ const Home = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [editTaskId, setEditTaskId] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [view, setView] = useState('tasks'); // New state to manage views
+  const [user, setUser] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -52,8 +54,10 @@ const Home = () => {
       const userId = localStorage.getItem('userId');
       try {
         const response = await axios.get(`http://localhost:5006/tasks?userId=${userId}`);
-        console.log('Fetched tasks:', response.data.tasks); // Debugging line
         setTasks(response.data.tasks);
+        // Fetch user profile data
+        const userResponse = await axios.get(`http://localhost:5006/user?userId=${userId}`);
+        setUser(userResponse.data.user);
       } catch (error) {
         console.error('Error fetching tasks:', error);
       }
@@ -68,6 +72,10 @@ const Home = () => {
     navigate('/login');
   };
 
+  const handleProfile = () => {
+    setView('profile'); // Switch to profile view
+  };
+
   const toggleDrawer = (open) => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
@@ -78,6 +86,11 @@ const Home = () => {
   const handleTaskSubmit = async (e) => {
     e.preventDefault();
     const userId = localStorage.getItem('userId');
+    if (!task || !taskDate || !taskPriority) {
+      setSnackbarMessage('Task, Date, and Priority cannot be empty');
+      setOpenSnackbar(true);
+      return;
+    }
     try {
       let response;
       if (editTaskId) {
@@ -85,16 +98,13 @@ const Home = () => {
       } else {
         response = await axios.post('http://localhost:5006/add-task', { userId, task, taskDate, taskPriority });
       }
-      console.log('Task response:', response.data); // Debugging line
       setSnackbarMessage(response.data.message);
       setOpenSnackbar(true);
       setTask('');
       setTaskDate('');
       setTaskPriority('');
       setEditTaskId(null);
-      // Fetch tasks again to update the list
       const fetchResponse = await axios.get(`http://localhost:5006/tasks?userId=${userId}`);
-      console.log('Updated tasks:', fetchResponse.data.tasks); // Debugging line
       setTasks(fetchResponse.data.tasks);
     } catch (error) {
       setSnackbarMessage('Error adding task');
@@ -122,10 +132,8 @@ const Home = () => {
       const response = await axios.delete(`http://localhost:5006/delete-task/${taskId}`);
       setSnackbarMessage(response.data.message);
       setOpenSnackbar(true);
-      // Fetch tasks again to update the list
       const userId = localStorage.getItem('userId');
       const fetchResponse = await axios.get(`http://localhost:5006/tasks?userId=${userId}`);
-      console.log('Updated tasks after delete:', fetchResponse.data.tasks); // Debugging line
       setTasks(fetchResponse.data.tasks);
     } catch (error) {
       setSnackbarMessage('Error deleting task');
@@ -139,7 +147,6 @@ const Home = () => {
     const userId = localStorage.getItem('userId');
     try {
       const response = await axios.get(`http://localhost:5006/search-tasks?userId=${userId}&query=${e.target.value}`);
-      console.log('Searched tasks:', response.data.tasks); // Debugging line
       setTasks(response.data.tasks);
     } catch (error) {
       console.error('Error searching tasks:', error);
@@ -157,12 +164,15 @@ const Home = () => {
   const handleMenuClick = (option) => {
     if (option === 'Sign Out') {
       handleSignOut();
+    } else if (option === 'Profile') {
+      handleProfile();
     }
     handleClose();
   };
 
   const menuItems = [
-    { text: 'Home', onClick: () => navigate('/') },
+    { text: 'Home', onClick: () => setView('tasks') },
+    { text: 'Profile', onClick: handleProfile },
     { text: 'Sign Out', onClick: handleSignOut }
   ];
 
@@ -176,6 +186,16 @@ const Home = () => {
         {menuItems.map((item, index) => (
           <ListItem button key={index} onClick={item.onClick}>
             <ListItemText primary={item.text} />
+          </ListItem>
+        ))}
+      </List>
+      <Typography variant="h6" sx={{ padding: 2 }}>
+        Tasks
+      </Typography>
+      <List>
+        {tasks.map((task) => (
+          <ListItem key={task.id}>
+            <ListItemText primary={task.task} secondary={`Due: ${task.taskDate}`} />
           </ListItem>
         ))}
       </List>
@@ -241,138 +261,160 @@ const Home = () => {
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
-            <MenuItem onClick={() => handleMenuClick('Sign Out')}>Sign Out</MenuItem>
+            {menuItems.map((item, index) => (
+              <MenuItem key={index} onClick={() => handleMenuClick(item.text)}>
+                {item.text}
+              </MenuItem>
+            ))}
           </Menu>
         </Toolbar>
       </AppBar>
-      <Container maxWidth="sm">
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="flex-start"
-          minHeight="100vh"
-        >
-          <Typography variant="h3" align="center">
-            {/* Add a title if necessary */}
-          </Typography>
-          <Drawer open={drawerOpen} onClose={toggleDrawer(false)}>
-            {list()}
-          </Drawer>
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="flex-start"
+        minHeight="100vh"
+        sx={{ background: 'url(/path/to/your/background-image.jpg) no-repeat left center fixed', backgroundSize: 'cover' }}
+      >
+        <Drawer open={drawerOpen} onClose={toggleDrawer(false)}>
+          {list()}
+        </Drawer>
 
-          <Box mt={4} width="100%">
-            <Container maxWidth="md">
-              <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                justifyContent="center"
-                sx={{
-                  backgroundColor: 'white',
-                  padding: '20px',
-                  borderRadius: '10px',
-                  boxShadow: '0 3px 5px rgba(0,0,0,5)',
-                }}
-              >
-                <form onSubmit={handleTaskSubmit}>
-                  <TextField
-                    label="New Task"
-                    variant="outlined"
-                    fullWidth
-                    value={task}
-                    onChange={(e) => setTask(e.target.value)}
-                    sx={{ mb: 2 }}
-                  />
-                  <TextField
-                    label="Task Date"
-                    type="date"
-                    variant="outlined"
-                    fullWidth
-                    value={taskDate}
-                    onChange={(e) => setTaskDate(e.target.value)}
-                    InputLabelProps={{
-                      shrink: true,
+        <Container maxWidth="md" sx={{ marginTop: 4 }}>
+          {view === 'tasks' ? (
+            <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+              <Box width="100%">
+                <Container maxWidth="md">
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    sx={{
+                      backgroundColor: 'white',
+                      padding: '20px',
+                      borderRadius: '10px',
+                      boxShadow: '0 3px 5px rgba(0,0,0,5)',
                     }}
-                    sx={{ mb: 2 }}
-                  />
-                  <FormControl fullWidth sx={{ mb: 2 }}>
-                    <InputLabel>Priority</InputLabel>
-                    <Select
-                      value={taskPriority}
-                      onChange={(e) => setTaskPriority(e.target.value)}
-                    >
-                      <MenuItem value="High">High</MenuItem>
-                      <MenuItem value="Medium">Medium</MenuItem>
-                      <MenuItem value="Low">Low</MenuItem>
-                    </Select>
-                  </FormControl>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    fullWidth
                   >
-                    {editTaskId ? 'Update Task' : 'Add Task'}
-                  </Button>
-                </form>
+                    <form onSubmit={handleTaskSubmit}>
+                      <TextField
+                        label="New Task"
+                        variant="outlined"
+                        fullWidth
+                        value={task}
+                        onChange={(e) => setTask(e.target.value)}
+                        sx={{ mb: 2 }}
+                      />
+                      <TextField
+                        label="Task Date"
+                        type="date"
+                        variant="outlined"
+                        fullWidth
+                        value={taskDate}
+                        onChange={(e) => setTaskDate(e.target.value)}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                        sx={{ mb: 2 }}
+                      />
+                      <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
+                        <InputLabel>Priority</InputLabel>
+                        <Select
+                          value={taskPriority}
+                          onChange={(e) => setTaskPriority(e.target.value)}
+                          label="Priority"
+                        >
+                          <MenuItem value="High">High</MenuItem>
+                          <MenuItem value="Medium">Medium</MenuItem>
+                          <MenuItem value="Low">Low</MenuItem>
+                        </Select>
+                      </FormControl>
+                      <Button type="submit" variant="contained" color="primary" fullWidth>
+                        {editTaskId ? 'Update Task' : 'Add Task'}
+                      </Button>
+                    </form>
+                  </Box>
+                </Container>
               </Box>
-            </Container>
-            <Box mt={4} width="100%">
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                width="100%"
-              >
-                <TableContainer component={Paper} sx={{ maxWidth: 600 }}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Task</TableCell>
-                        <TableCell>Date</TableCell>
-                        <TableCell>Priority</TableCell>
-                        <TableCell align="right">Actions</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {tasks.map((task) => (
-                        <TableRow key={task.id} sx={{ backgroundColor: getPriorityColor(task.taskPriority) }}>
-                          <TableCell>{task.task}</TableCell>
-                          <TableCell>{task.taskDate}</TableCell>
-                          <TableCell>{task.taskPriority}</TableCell>
-                          <TableCell align="right">
-                            <IconButton
-                              color="primary"
-                              onClick={() => handleEditTask(task)}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                            <IconButton
-                              color="secondary"
-                              onClick={() => handleDeleteTask(task.id)}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
+
+              <Box mt={4} width="100%">
+                <Container maxWidth="md">
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    sx={{
+                      backgroundColor: 'white',
+                      padding: '20px',
+                      borderRadius: '10px',
+                      boxShadow: '0 3px 5px rgba(0,0,0,5)',
+                    }}
+                  >
+                    <Typography variant="h6" gutterBottom>
+                      Tasks
+                    </Typography>
+                    <TableContainer component={Paper}>
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>Task</TableCell>
+                            <TableCell>Date</TableCell>
+                            <TableCell>Priority</TableCell>
+                            <TableCell align="right">Actions</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {tasks.map((task) => (
+                            task ? (
+                              <TableRow key={task.id} sx={{ backgroundColor: getPriorityColor(task.taskPriority) }}>
+                                <TableCell>{task.task || 'No task'}</TableCell>
+                                <TableCell>{task.taskDate || 'No date'}</TableCell>
+                                <TableCell>{task.taskPriority || 'No priority'}</TableCell>
+                                <TableCell align="right">
+                                  <IconButton
+                                    color="primary"
+                                    onClick={() => handleEditTask(task)}
+                                  >
+                                    <EditIcon />
+                                  </IconButton>
+                                  <IconButton
+                                    color="secondary"
+                                    onClick={() => handleDeleteTask(task.id)}
+                                  >
+                                    <DeleteIcon />
+                                  </IconButton>
+                                </TableCell>
+                              </TableRow>
+                            ) : (
+                              <TableRow key="empty">
+                                <TableCell colSpan={4}>No tasks available</TableCell>
+                              </TableRow>
+                            )
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Box>
+                </Container>
               </Box>
             </Box>
-          </Box>
-        </Box>
-        <Snackbar
-          open={openSnackbar}
-          autoHideDuration={6000}
-          onClose={handleSnackbarClose}
-        >
-          <Alert onClose={handleSnackbarClose} severity="success">
-            {snackbarMessage}
-          </Alert>
-        </Snackbar>
-      </Container>
+          ) : (
+            <Profile user={user} setUser={setUser} />
+          )}
+        </Container>
+      </Box>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 };

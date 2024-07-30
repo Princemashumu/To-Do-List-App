@@ -14,7 +14,7 @@ app.use(cors());
 const db = new sqlite3.Database('./tasks.db');
 
 db.serialize(() => {
-  db.run('CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, email TEXT, password TEXT)');
+  db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, email TEXT, password TEXT)');
   // db.run('CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, task TEXT, FOREIGN KEY(user_id) REFERENCES users(id))');
   db.run(`CREATE TABLE IF NOT EXISTS tasks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -66,16 +66,16 @@ app.post('/add-task', (req, res) => {
 });
 
 // Get tasks
-app.get('/tasks', (req, res) => {
+app.get('/tasks', async (req, res) => {
   const userId = req.query.userId;
-  const query = `SELECT * FROM tasks WHERE userId = ?`;
-  db.all(query, [userId], (err, rows) => {
-    if (err) {
-      return res.status(500).json({ message: 'Error fetching tasks' });
-    }
-    res.status(200).json({ tasks: rows });
-  });
+  try {
+    const tasks = await db.all('SELECT * FROM tasks WHERE userId = ?', [userId]);
+    res.json({ tasks });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching tasks' });
+  }
 });
+
 
 // Edit task
 app.put('/edit-task/:id', (req, res) => {
@@ -109,4 +109,23 @@ app.get('/', (req, res) => {
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
+});
+
+
+
+const express = require('express');
+const multer = require('multer');
+const path = require('path');
+
+// const app = express();
+const upload = multer({ dest: 'uploads/' });
+
+app.post('/upload-profile-picture', upload.single('file'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).send('No file uploaded.');
+  }
+  const filePath = path.join('uploads', req.file.filename);
+  // Save the file path to the user's profile in your database
+  user.profilePicture = filePath;
+  res.json({ profilePictureUrl: `/uploads/${req.file.filename}` });
 });
