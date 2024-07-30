@@ -22,19 +22,23 @@ import {
   AppBar,
   Toolbar,
   Menu,
-  MenuItem
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-// import AccountCircle from '@mui/icons-material/AccountCircle';
 import axios from 'axios';
 import './App.css';
 
 const Home = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [task, setTask] = useState('');
+  const [taskDate, setTaskDate] = useState('');
+  const [taskPriority, setTaskPriority] = useState('');
   const [tasks, setTasks] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -47,7 +51,8 @@ const Home = () => {
     const fetchTasks = async () => {
       const userId = localStorage.getItem('userId');
       try {
-        const response = await axios.get(`http://localhost:5005/tasks?userId=${userId}`);
+        const response = await axios.get(`http://localhost:5006/tasks?userId=${userId}`);
+        console.log('Fetched tasks:', response.data.tasks); // Debugging line
         setTasks(response.data.tasks);
       } catch (error) {
         console.error('Error fetching tasks:', error);
@@ -76,16 +81,20 @@ const Home = () => {
     try {
       let response;
       if (editTaskId) {
-        response = await axios.put(`http://localhost:5005/edit-task/${editTaskId}`, { task });
+        response = await axios.put(`http://localhost:5006/edit-task/${editTaskId}`, { task, taskDate, taskPriority });
       } else {
-        response = await axios.post('http://localhost:5005/add-task', { userId, task });
+        response = await axios.post('http://localhost:5006/add-task', { userId, task, taskDate, taskPriority });
       }
+      console.log('Task response:', response.data); // Debugging line
       setSnackbarMessage(response.data.message);
       setOpenSnackbar(true);
       setTask('');
+      setTaskDate('');
+      setTaskPriority('');
       setEditTaskId(null);
       // Fetch tasks again to update the list
-      const fetchResponse = await axios.get(`http://localhost:5005/tasks?userId=${userId}`);
+      const fetchResponse = await axios.get(`http://localhost:5006/tasks?userId=${userId}`);
+      console.log('Updated tasks:', fetchResponse.data.tasks); // Debugging line
       setTasks(fetchResponse.data.tasks);
     } catch (error) {
       setSnackbarMessage('Error adding task');
@@ -103,17 +112,20 @@ const Home = () => {
 
   const handleEditTask = (task) => {
     setTask(task.task);
+    setTaskDate(task.taskDate);
+    setTaskPriority(task.taskPriority);
     setEditTaskId(task.id);
   };
 
   const handleDeleteTask = async (taskId) => {
     try {
-      const response = await axios.delete(`http://localhost:5005/delete-task/${taskId}`);
+      const response = await axios.delete(`http://localhost:5006/delete-task/${taskId}`);
       setSnackbarMessage(response.data.message);
       setOpenSnackbar(true);
       // Fetch tasks again to update the list
       const userId = localStorage.getItem('userId');
-      const fetchResponse = await axios.get(`http://localhost:5005/tasks?userId=${userId}`);
+      const fetchResponse = await axios.get(`http://localhost:5006/tasks?userId=${userId}`);
+      console.log('Updated tasks after delete:', fetchResponse.data.tasks); // Debugging line
       setTasks(fetchResponse.data.tasks);
     } catch (error) {
       setSnackbarMessage('Error deleting task');
@@ -126,7 +138,8 @@ const Home = () => {
     setSearchQuery(e.target.value);
     const userId = localStorage.getItem('userId');
     try {
-      const response = await axios.get(`http://localhost:5005/search-tasks?userId=${userId}&query=${e.target.value}`);
+      const response = await axios.get(`http://localhost:5006/search-tasks?userId=${userId}&query=${e.target.value}`);
+      console.log('Searched tasks:', response.data.tasks); // Debugging line
       setTasks(response.data.tasks);
     } catch (error) {
       console.error('Error searching tasks:', error);
@@ -168,6 +181,19 @@ const Home = () => {
       </List>
     </Box>
   );
+
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case 'High':
+        return '#f8d7da';
+      case 'Medium':
+        return '#fff3cd';
+      case 'Low':
+        return '#d4edda';
+      default:
+        return 'inherit';
+    }
+  };
 
   return (
     <>
@@ -224,7 +250,7 @@ const Home = () => {
           display="flex"
           flexDirection="column"
           alignItems="center"
-          justifyContent="center"
+          justifyContent="flex-start"
           minHeight="100vh"
         >
           <Typography variant="h3" align="center">
@@ -233,25 +259,64 @@ const Home = () => {
           <Drawer open={drawerOpen} onClose={toggleDrawer(false)}>
             {list()}
           </Drawer>
+
           <Box mt={4} width="100%">
-            <form onSubmit={handleTaskSubmit}>
-              <TextField
-                label="New Task"
-                variant="outlined"
-                fullWidth
-                value={task}
-                onChange={(e) => setTask(e.target.value)}
-              />
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                fullWidth
-                sx={{ mt: 2 }}
+            <Container maxWidth="md">
+              <Box
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
+                sx={{
+                  backgroundColor: 'white',
+                  padding: '20px',
+                  borderRadius: '10px',
+                  boxShadow: '0 3px 5px rgba(0,0,0,5)',
+                }}
               >
-                {editTaskId ? 'Update Task' : 'Add Task'}
-              </Button>
-            </form>
+                <form onSubmit={handleTaskSubmit}>
+                  <TextField
+                    label="New Task"
+                    variant="outlined"
+                    fullWidth
+                    value={task}
+                    onChange={(e) => setTask(e.target.value)}
+                    sx={{ mb: 2 }}
+                  />
+                  <TextField
+                    label="Task Date"
+                    type="date"
+                    variant="outlined"
+                    fullWidth
+                    value={taskDate}
+                    onChange={(e) => setTaskDate(e.target.value)}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    sx={{ mb: 2 }}
+                  />
+                  <FormControl fullWidth sx={{ mb: 2 }}>
+                    <InputLabel>Priority</InputLabel>
+                    <Select
+                      value={taskPriority}
+                      onChange={(e) => setTaskPriority(e.target.value)}
+                    >
+                      <MenuItem value="High">High</MenuItem>
+                      <MenuItem value="Medium">Medium</MenuItem>
+                      <MenuItem value="Low">Low</MenuItem>
+                    </Select>
+                  </FormControl>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                  >
+                    {editTaskId ? 'Update Task' : 'Add Task'}
+                  </Button>
+                </form>
+              </Box>
+            </Container>
             <Box mt={4} width="100%">
               <Box
                 display="flex"
@@ -264,13 +329,17 @@ const Home = () => {
                     <TableHead>
                       <TableRow>
                         <TableCell>Task</TableCell>
+                        <TableCell>Date</TableCell>
+                        <TableCell>Priority</TableCell>
                         <TableCell align="right">Actions</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
                       {tasks.map((task) => (
-                        <TableRow key={task.id}>
+                        <TableRow key={task.id} sx={{ backgroundColor: getPriorityColor(task.taskPriority) }}>
                           <TableCell>{task.task}</TableCell>
+                          <TableCell>{task.taskDate}</TableCell>
+                          <TableCell>{task.taskPriority}</TableCell>
                           <TableCell align="right">
                             <IconButton
                               color="primary"

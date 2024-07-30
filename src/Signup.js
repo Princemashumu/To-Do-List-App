@@ -27,7 +27,7 @@ const Signup = () => {
     }
     setLoading(true);
     try {
-      await axios.post('http://localhost:5005/signup', {
+      await axios.post('http://localhost:5006/signup', {
         username,
         email,
         password
@@ -70,9 +70,10 @@ const Signup = () => {
           flexDirection="column"
           alignItems="center"
           justifyContent="center"
-          minHeight="100vh"
+          minHeight="50vh"
+          marginTop='5em'
           sx={{
-            backgroundColor: 'beige',
+            backgroundColor: 'white',
             padding: '20px',
             borderRadius: '10px',
             boxShadow: '0 3px 5px rgba(0,0,0,5)'

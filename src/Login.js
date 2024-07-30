@@ -22,7 +22,7 @@ const Login = () => {
     }
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:5005/login', { username, password });
+      const response = await axios.post('http://localhost:5006/login', { username, password });
       localStorage.setItem('authToken', response.data.token);
       setOpen(true);
       setTimeout(() => {
@@ -78,9 +78,10 @@ const Login = () => {
           flexDirection="column"
           alignItems="center"
           justifyContent="center"
-          minHeight="100vh"
+          minHeight="50vh"
+          marginTop='5em'
           sx={{
-            backgroundColor: 'beige',
+            backgroundColor: 'white',
             padding: '20px',
             borderRadius: '10px',
             boxShadow: '0 3px 5px rgba(0,0,0,5)'
