@@ -65,61 +65,7 @@ app.post('/login', function (req, res) {
       });
     }
   });
-}); // // Add task route
-// app.post('/add-task', (req, res) => {
-//   const { userId, task } = req.body;
-//   const stmt = db.prepare('INSERT INTO tasks (user_id, task) VALUES (?, ?)');
-//   stmt.run(userId, task, function (err) {
-//     if (err) {
-//       return res.status(500).json({ error: err.message });
-//     }
-//     res.status(200).json({ message: 'Task added successfully', taskId: this.lastID });
-//   });
-//   stmt.finalize();
-// });
-// // Fetch tasks route
-// app.get('/tasks', (req, res) => {
-//   const { userId } = req.query;
-//   db.all('SELECT * FROM tasks WHERE user_id = ?', [userId], (err, rows) => {
-//     if (err) {
-//       return res.status(500).json({ error: err.message });
-//     }
-//     res.status(200).json({ tasks: rows });
-//   });
-// });
-// // Edit task route
-// app.put('/edit-task/:id', (req, res) => {
-//   const { id } = req.params;
-//   const { task } = req.body;
-//   const stmt = db.prepare('UPDATE tasks SET task = ? WHERE id = ?');
-//   stmt.run(task, id, function (err) {
-//     if (err) {
-//       return res.status(500).json({ error: err.message });
-//     }
-//     res.status(200).json({ message: 'Task updated successfully' });
-//   });
-//   stmt.finalize();
-// });
-// // Delete task route
-// app.delete('/delete-task/:id', (req, res) => {
-//   const { id } = req.params;
-//   const stmt = db.prepare('DELETE FROM tasks WHERE id = ?');
-//   stmt.run(id, function (err) {
-//     if (err) {
-//       return res.status(500).json({ error: err.message });
-//     }
-//     res.status(200).json({ message: 'Task deleted successfully' });
-//   });
-//   stmt.finalize();
-// });
-// // Root route to handle GET requests
-// app.get('/', (req, res) => {
-//   res.send('Welcome to the ToDo App API');
-// });
-// app.listen(port, () => {
-//   console.log(`Server running on http://localhost:${port}`);
-// });
-// Add a new task
+}); // Add a new task
 
 app.post('/add-task', function (req, res) {
   var _req$body3 = req.body,
@@ -192,6 +138,10 @@ app["delete"]('/delete-task/:id', function (req, res) {
       message: 'Task deleted successfully'
     });
   });
+}); // Root route to handle GET requests
+
+app.get('/', function (req, res) {
+  res.send('Welcome to the ToDo App API');
 });
 app.listen(port, function () {
   console.log("Server is running on port ".concat(port));
