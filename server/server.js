@@ -64,7 +64,7 @@ app.post('/add-task', (req, res) => {
     res.status(200).json({ message: 'Task added successfully', taskId: this.lastID });
   });
 });
-
+const { getTasksFromDatabase } = require('C:\Users\User\Documents\Code Tribe\ACADEMY\todolistapp\server\tasks.db');
 // Get tasks
 app.get('/tasks', async (req, res) => {
   const { userId } = req.query;

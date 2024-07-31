@@ -86,7 +86,11 @@ app.post('/add-task', function (req, res) {
       taskId: this.lastID
     });
   });
-}); // Get tasks
+});
+
+var _require = require("C:UsersUserDocumentsCode TribeACADEMY\todolistappserver\tasks.db"),
+    getTasksFromDatabase = _require.getTasksFromDatabase; // Get tasks
+
 
 app.get('/tasks', function _callee(req, res) {
   var userId, tasks;
