@@ -1,0 +1,8 @@
+.background {
+    background-image: url('Img1.jpg'); /* Replace with the path to your image */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh; /* Ensure it covers the full height of the viewport */
+  }
+  
