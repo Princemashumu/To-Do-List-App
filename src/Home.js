@@ -132,6 +132,7 @@ const Home = () => {
       setTasks(fetchResponse.data.tasks);
     } catch (error) {
       // console.error('Error adding task:', error.response ? error.response.data : error.message);
+      console.error('Error adding task:', error.response ? error.response.data : error.message);
       setSnackbarMessage('Succes!');
       setOpenSnackbar(true);
     }
