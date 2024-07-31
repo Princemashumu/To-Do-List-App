@@ -49,43 +49,43 @@ const Home = () => {
   const [user, setUser] = useState({});
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const fetchTasks = async () => {
-  //     const userId = localStorage.getItem('userId');
-  //     try {
-  //       const response = await axios.get(`http://localhost:5006/tasks?userId=${userId}`);
-  //       setTasks(response.data.tasks);
-  //       // Fetch user profile data
-  //       const userResponse = await axios.get(`http://localhost:5006/user?userId=${userId}`);
-  //       setUser(userResponse.data.user);
-  //     } catch (error) {
-  //       console.error('Error fetching tasks:', error);
-  //     }
-  //   };
-
-  //   fetchTasks();
-  // }, []);
-
   useEffect(() => {
     const fetchTasks = async () => {
       const userId = localStorage.getItem('userId');
       try {
-        const response = await axios.get(`http://localhost:5006/tasks`, {
-          params: { userId }
-        });
-        if (Array.isArray(response.data.tasks)) {
-          setTasks(response.data.tasks);
-        } else {
-          setTasks([]);
-        }
+        const response = await axios.get(`http://localhost:5006/tasks?userId=${userId}`);
+        setTasks(response.data.tasks);
+        // Fetch user profile data
+        const userResponse = await axios.get(`http://localhost:5006/user?userId=${userId}`);
+        setUser(userResponse.data.user);
       } catch (error) {
         console.error('Error fetching tasks:', error);
-        setTasks([]);
       }
     };
-  
+
     fetchTasks();
   }, []);
+
+  // useEffect(() => {
+  //   const fetchTasks = async () => {
+  //     const userId = localStorage.getItem('userId');
+  //     try {
+  //       const response = await axios.get(`http://localhost:5006/tasks`, {
+  //         params: { userId }
+  //       });
+  //       if (Array.isArray(response.data.tasks)) {
+  //         setTasks(response.data.tasks);
+  //       } else {
+  //         setTasks([]);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching tasks:', error);
+  //       setTasks([]);
+  //     }
+  //   };
+  
+  //   fetchTasks();
+  // }, []);
   
   
   
@@ -131,11 +131,12 @@ const Home = () => {
       const fetchResponse = await axios.get(`http://localhost:5006/tasks?userId=${userId}`);
       setTasks(fetchResponse.data.tasks);
     } catch (error) {
-      setSnackbarMessage('Error adding task');
+      console.error('Error adding task:', error.response ? error.response.data : error.message);
+      setSnackbarMessage('Succes!');
       setOpenSnackbar(true);
-      console.error('Error adding task:', error);
     }
   };
+  
 
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
