@@ -70,22 +70,23 @@ const Home = () => {
     const fetchTasks = async () => {
       const userId = localStorage.getItem('userId');
       try {
-        const response = await axios.get(`http://localhost:5006/tasks?userId=${userId}`);
-        console.log('Fetched tasks:', response.data.tasks); // Debugging line
+        const response = await axios.get(`http://localhost:5006/tasks`, {
+          params: { userId }
+        });
         if (Array.isArray(response.data.tasks)) {
           setTasks(response.data.tasks);
         } else {
-          setTasks([]); // Set an empty array if response is not an array
-          console.error('Error: API response is not an array');
+          setTasks([]);
         }
       } catch (error) {
         console.error('Error fetching tasks:', error);
-        setTasks([]); // Set an empty array if there's an error
+        setTasks([]);
       }
     };
-
+  
     fetchTasks();
   }, []);
+  
   
   
 
@@ -96,7 +97,7 @@ const Home = () => {
   };
 
   const handleProfile = () => {
-    setView('profile'); // Switch to profile view
+    setView('seetings'); // Switch to profile view
   };
 
   const toggleDrawer = (open) => (event) => {

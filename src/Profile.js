@@ -59,7 +59,7 @@ const Profile = ({ user, setUser }) => {
   return (
     <Container>
       <Box mt={4} display="flex" flexDirection="column" alignItems="center">
-        <Typography variant="h4">Profile</Typography>
+        <Typography variant="h4">My Profile</Typography>
         <Avatar
           alt={name}
           src={profilePicture || '/default-profile.png'} // Default image if none uploaded
