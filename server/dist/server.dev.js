@@ -97,24 +97,26 @@ app.get('/tasks', function _callee(req, res) {
           userId = req.query.userId;
           _context.prev = 1;
           _context.next = 4;
-          return regeneratorRuntime.awrap(db.all('SELECT * FROM tasks WHERE userId = ?', [userId]));
+          return regeneratorRuntime.awrap(getTasksFromDatabase(userId));
 
         case 4:
           tasks = _context.sent;
+          // Assuming this function fetches tasks from your database
           res.json({
             tasks: tasks
           });
-          _context.next = 11;
+          _context.next = 12;
           break;
 
         case 8:
           _context.prev = 8;
           _context.t0 = _context["catch"](1);
+          console.error('Error fetching tasks:', _context.t0);
           res.status(500).json({
-            message: 'Error fetching tasks'
+            error: 'Internal server error'
           });
 
-        case 11:
+        case 12:
         case "end":
           return _context.stop();
       }
@@ -163,4 +165,25 @@ app.get('/', function (req, res) {
 });
 app.listen(port, function () {
   console.log("Server is running on port ".concat(port));
+}); // const express = require('express');
+
+var multer = require('multer');
+
+var path = require('path'); // const app = express();
+
+
+var upload = multer({
+  dest: 'uploads/'
+});
+app.post('/upload-profile-picture', upload.single('file'), function (req, res) {
+  if (!req.file) {
+    return res.status(400).send('No file uploaded.');
+  }
+
+  var filePath = path.join('uploads', req.file.filename); // Save the file path to the user's profile in your database
+
+  user.profilePicture = filePath;
+  res.json({
+    profilePictureUrl: "/uploads/".concat(req.file.filename)
+  });
 });

@@ -49,22 +49,45 @@ const Home = () => {
   const [user, setUser] = useState({});
   const navigate = useNavigate();
 
+  // useEffect(() => {
+  //   const fetchTasks = async () => {
+  //     const userId = localStorage.getItem('userId');
+  //     try {
+  //       const response = await axios.get(`http://localhost:5006/tasks?userId=${userId}`);
+  //       setTasks(response.data.tasks);
+  //       // Fetch user profile data
+  //       const userResponse = await axios.get(`http://localhost:5006/user?userId=${userId}`);
+  //       setUser(userResponse.data.user);
+  //     } catch (error) {
+  //       console.error('Error fetching tasks:', error);
+  //     }
+  //   };
+
+  //   fetchTasks();
+  // }, []);
+
   useEffect(() => {
     const fetchTasks = async () => {
       const userId = localStorage.getItem('userId');
       try {
         const response = await axios.get(`http://localhost:5006/tasks?userId=${userId}`);
-        setTasks(response.data.tasks);
-        // Fetch user profile data
-        const userResponse = await axios.get(`http://localhost:5006/user?userId=${userId}`);
-        setUser(userResponse.data.user);
+        console.log('Fetched tasks:', response.data.tasks); // Debugging line
+        if (Array.isArray(response.data.tasks)) {
+          setTasks(response.data.tasks);
+        } else {
+          setTasks([]); // Set an empty array if response is not an array
+          console.error('Error: API response is not an array');
+        }
       } catch (error) {
         console.error('Error fetching tasks:', error);
+        setTasks([]); // Set an empty array if there's an error
       }
     };
 
     fetchTasks();
   }, []);
+  
+  
 
   const handleSignOut = () => {
     localStorage.removeItem('authToken');
@@ -193,28 +216,33 @@ const Home = () => {
         Tasks
       </Typography>
       <List>
-        {tasks.map((task) => (
-          <ListItem key={task.id}>
-            <ListItemText primary={task.task} secondary={`Due: ${task.taskDate}`} />
+        {Array.isArray(tasks) ? (
+          tasks.map((task) => (
+            <ListItem key={task.id}>
+              <ListItemText primary={task.task} secondary={`Due: ${task.taskDate}`} />
+            </ListItem>
+          ))
+        ) : (
+          <ListItem>
+            <ListItemText primary="No tasks available" />
           </ListItem>
-        ))}
+        )}
       </List>
     </Box>
   );
 
   const getPriorityColor = (priority) => {
     switch (priority) {
-      case 'High':
-        return '#f8d7da';
-      case 'Medium':
-        return '#fff3cd';
       case 'Low':
-        return '#d4edda';
+        return 'green';
+      case 'Medium':
+        return 'orange';
+      case 'High':
+        return 'red';
       default:
-        return 'inherit';
+        return 'grey';
     }
   };
-
   return (
     <>
       <AppBar position="static" sx={{ backgroundColor: 'black' }}>
@@ -367,34 +395,35 @@ const Home = () => {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {tasks.map((task) => (
-                            task ? (
-                              <TableRow key={task.id} sx={{ backgroundColor: getPriorityColor(task.taskPriority) }}>
-                                <TableCell>{task.task || 'No task'}</TableCell>
-                                <TableCell>{task.taskDate || 'No date'}</TableCell>
-                                <TableCell>{task.taskPriority || 'No priority'}</TableCell>
-                                <TableCell align="right">
-                                  <IconButton
-                                    color="primary"
-                                    onClick={() => handleEditTask(task)}
-                                  >
-                                    <EditIcon />
-                                  </IconButton>
-                                  <IconButton
-                                    color="secondary"
-                                    onClick={() => handleDeleteTask(task.id)}
-                                  >
-                                    <DeleteIcon />
-                                  </IconButton>
-                                </TableCell>
-                              </TableRow>
-                            ) : (
-                              <TableRow key="empty">
-                                <TableCell colSpan={4}>No tasks available</TableCell>
-                              </TableRow>
-                            )
-                          ))}
-                        </TableBody>
+  {Array.isArray(tasks) && tasks.length > 0 ? (
+    tasks.map((task) =>
+      task ? (
+        <TableRow key={task.id} sx={{ backgroundColor: getPriorityColor(task.taskPriority) }}>
+          <TableCell>{task.task || 'No task'}</TableCell>
+          <TableCell>{task.taskDate || 'No date'}</TableCell>
+          <TableCell>{task.taskPriority || 'No priority'}</TableCell>
+          <TableCell align="right">
+            <IconButton color="primary" onClick={() => handleEditTask(task)}>
+              <EditIcon />
+            </IconButton>
+            <IconButton color="secondary" onClick={() => handleDeleteTask(task.id)}>
+              <DeleteIcon />
+            </IconButton>
+          </TableCell>
+        </TableRow>
+      ) : (
+        <TableRow key="empty">
+          <TableCell colSpan={4}>No tasks available</TableCell>
+        </TableRow>
+      )
+    )
+  ) : (
+    <TableRow key="no-data">
+      <TableCell colSpan={4}>No tasks available</TableCell>
+    </TableRow>
+  )}
+</TableBody>
+
                       </Table>
                     </TableContainer>
                   </Box>

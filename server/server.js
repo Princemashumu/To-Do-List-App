@@ -67,12 +67,13 @@ app.post('/add-task', (req, res) => {
 
 // Get tasks
 app.get('/tasks', async (req, res) => {
-  const userId = req.query.userId;
+  const { userId } = req.query;
   try {
-    const tasks = await db.all('SELECT * FROM tasks WHERE userId = ?', [userId]);
+    const tasks = await getTasksFromDatabase(userId); // Assuming this function fetches tasks from your database
     res.json({ tasks });
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching tasks' });
+    console.error('Error fetching tasks:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -113,7 +114,7 @@ app.listen(port, () => {
 
 
 
-const express = require('express');
+// const express = require('express');
 const multer = require('multer');
 const path = require('path');
 
