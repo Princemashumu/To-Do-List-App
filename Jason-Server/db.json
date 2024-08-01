@@ -165,15 +165,23 @@
       "username": "",
       "email": "",
       "password": ""
+    },
+    {
+      "id": "b27c",
+      "username": "eddie",
+      "email": "eddie@gmail.com",
+      "password": "999",
+      "Confirmpassword": "999"
+    },
+    {
+      "id": "7614",
+      "username": "dipuo",
+      "email": "dipuo@gmail.com",
+      "password": "888",
+      "Confirmpassword": "888"
     }
   ],
   "add-task": [
-    {
-      "task": "trying",
-      "taskDate": "2024-08-10",
-      "taskPriority": "High",
-      "id": "d9af"
-    },
     {
       "task": "Code sleep repeat",
       "taskDate": "2024-08-06",
@@ -205,6 +213,22 @@
       "taskDate": "2024-08-02",
       "taskPriority": "Low",
       "id": "d3fe"
+    },
+    {
+      "id": "b87d",
+      "userId": "298a",
+      "task": "coding",
+      "taskDate": "2024-08-10",
+      "taskPriority": "Low"
+    }
+  ],
+  "updated-users": [
+    {
+      "id": "f629",
+      "userId": "0e37",
+      "username": "wam",
+      "email": "wam@gmail.com",
+      "password": "222"
     }
   ],
   "edit-task": [],

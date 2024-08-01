@@ -4,6 +4,7 @@ import axios from 'axios';
 // import { useNavigate } from 'react-router-dom';
 import customIcon from './img3.png';
 import IconButton from '@mui/material/IconButton';
+import { useNavigate } from 'react-router-dom';
 
 const Signup = () => {
   const [username, setUsername] = useState('');
@@ -12,6 +13,9 @@ const Signup = () => {
   const [Confirmpassword, setConfirmPassword] =useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+
+
+  const navigate = useNavigate();
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -34,7 +38,11 @@ const Signup = () => {
       setEmail('');
       setPassword('');
       setConfirmPassword('');
-    } catch (error) {
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
+    } 
+    catch (error) {
       setSnackbarMessage('Error signing up');
       setOpenSnackbar(true);
       console.error('Error signing up:', error);
