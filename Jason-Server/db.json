@@ -1,0 +1,56 @@
+{
+  "users": [
+    {
+      "id": "3f7a",
+      "username": "peekay",
+      "email": "princengwakomashumu@gmail.com",
+      "password": "123",
+      "confirmPassword": "123"
+    },
+    {
+      "id": "069b",
+      "username": "peekay",
+      "password": "peee"
+    },
+    {
+      "id": "9f7f",
+      "username": "peekay",
+      "password": "peee"
+    },
+    {
+      "id": "f9ad",
+      "username": "peekay",
+      "email": "peekay@gmail.com",
+      "password": "prince123",
+      "Confirmpassword": "prince123"
+    },
+    {
+      "id": "c38d",
+      "username": "ngwako",
+      "email": "ngwako@gmail.com",
+      "password": "ngwako123",
+      "Confirmpassword": "ngwako123"
+    },
+    {
+      "id": "ecd2",
+      "username": "ngwako",
+      "email": "ngwako@gmail.com",
+      "password": "ngwako123",
+      "Confirmpassword": "ngwako123"
+    },
+    {
+      "id": "eb79",
+      "username": "peekay",
+      "email": "",
+      "password": "123",
+      "Confirmpassword": "222"
+    },
+    {
+      "id": "298a",
+      "username": "princess",
+      "email": "princess@gmail.com",
+      "password": "12345",
+      "Confirmpassword": "12345"
+    }
+  ]
+}

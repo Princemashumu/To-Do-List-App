@@ -1,45 +1,57 @@
 import React, { useState } from 'react';
-import { TextField, AppBar, Toolbar, Button, Container, Typography, Box, Snackbar, Alert,CircularProgress  } from '@mui/material';
+import { TextField, AppBar, Toolbar, Button, Container, Typography, Box, Snackbar, Alert} from '@mui/material';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import customIcon from './img3.png';
 import IconButton from '@mui/material/IconButton';
 
-
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [open, setOpen] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const navigate = useNavigate(); // Hook for navigation
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (!username || !password) {
-      setError('Please fill out all fields');
+    if (!username) {
+      setSnackbarMessage('Enter Username');
+      setOpenSnackbar(true);
+      return;
+    }else if(!password)
+    {
+      setSnackbarMessage('Enter Password');
+      setOpenSnackbar(true);
       return;
     }
-    setLoading(true);
     try {
-      const response = await axios.post('http://localhost:5006/login', { username, password });
-      localStorage.setItem('authToken', response.data.token);
-      setOpen(true);
-      setTimeout(() => {
-        setLoading(false);
-        navigate('/');
-      }, 1000); // Redirect after 1 second
-    } catch (err) {
-      setLoading(false);
-      setError('Invalid username or password');
+      const response = await axios.get('http://localhost:5000/users', {
+        params: { username, password },
+      });
+      const user = response.data.find(
+        (user) => user.username === username && user.password === password
+      );
+      if (user) {
+        setSnackbarMessage('Login successful');
+        localStorage.setItem('authToken', 'your-auth-token');
+        localStorage.setItem('userId', user.id);
+        navigate('/home'); // Redirect to home page
+      } else {
+        setSnackbarMessage('Invalid username or password');
+      }
+      setOpenSnackbar(true);
+    } catch (error) {
+      setSnackbarMessage('Error logging in');
+      setOpenSnackbar(true);
+      console.error('Error logging in:', error);
     }
   };
 
-  const handleClose = (event, reason) => {
+  const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
-    setOpen(false);
+    setOpenSnackbar(false);
   };
 
   return (
@@ -73,6 +85,7 @@ const Login = () => {
         </Toolbar>
       </AppBar>
       <Container maxWidth="sm">
+        
         <Box
           display="flex"
           flexDirection="column"
@@ -87,44 +100,44 @@ const Login = () => {
             boxShadow: '0 3px 5px rgba(0,0,0,5)'
           }}
         >
-          <Typography variant="h4">Login</Typography>
-          {error && <Alert severity="error">{error}</Alert>}
-          <form onSubmit={handleSubmit}>
-            <TextField
-              label="Username"
-              variant="outlined"
-              margin="normal"
-              fullWidth
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-            <TextField
-              label="Password"
-              type="password"
-              variant="outlined"
-              margin="normal"
-              fullWidth
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <Button type="submit" variant="contained" color="primary" fullWidth>
-              Login
-            </Button>
-          </form>
-          <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
-            <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-              Login successful! Redirecting to home...
-            </Alert>
-          </Snackbar>
-          {loading && (
-            <Box display="flex" alignItems="center" justifyContent="center" mt={2}>
-              <CircularProgress />
-              <img src={customIcon} alt="Loading" style={{ width: 50, height: 50, marginLeft: 10 }} />
-              </Box>
-          )}
-        </Box>
+          
+          <Typography variant="h6" gutterBottom>
+          Login
+        </Typography>
+        <form onSubmit={handleLogin}>
+          <TextField
+            label="Username"
+            variant="outlined"
+            fullWidth
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            label="Password"
+            type="password"
+            variant="outlined"
+            fullWidth
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            sx={{ mb: 2 }}
+          />
+          <Button type="submit" variant="contained" color="primary" fullWidth>
+            Login
+          </Button>
+        </form>
+      </Box>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
       </Container>
-    </>
+      </>
   );
 };
 

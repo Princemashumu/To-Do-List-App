@@ -66,34 +66,11 @@ const Home = () => {
     fetchTasks();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchTasks = async () => {
-  //     const userId = localStorage.getItem('userId');
-  //     try {
-  //       const response = await axios.get(`http://localhost:5006/tasks`, {
-  //         params: { userId }
-  //       });
-  //       if (Array.isArray(response.data.tasks)) {
-  //         setTasks(response.data.tasks);
-  //       } else {
-  //         setTasks([]);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching tasks:', error);
-  //       setTasks([]);
-  //     }
-  //   };
-  
-  //   fetchTasks();
-  // }, []);
-  
-  
-  
 
   const handleSignOut = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('userId');
-    navigate('/login');
+    navigate('/Login');
   };
 
   const handleProfile = () => {

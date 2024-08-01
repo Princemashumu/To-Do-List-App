@@ -1,53 +1,51 @@
 import React, { useState } from 'react';
-import { TextField, AppBar, Toolbar, Button, Container, Typography, Box, Snackbar, Alert, Link,CircularProgress } from '@mui/material';
+import { TextField, AppBar, Toolbar, Button, Container, Typography, Box, Snackbar, Alert, Link} from '@mui/material';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import customIcon from './img3.png';
 import IconButton from '@mui/material/IconButton';
 
 const Signup = () => {
   const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
+  const [email,setEmail]= useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [open, setOpen] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const [Confirmpassword, setConfirmPassword] =useState('');
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
-  const handleSubmit = async (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
-    if (!username || !email || !password || !confirmPassword) {
-      setError('Please fill out all fields');
+    if (!username || !password || !email || !Confirmpassword) {
+      setSnackbarMessage('Please enter Credintials');
+      setOpenSnackbar(true);
       return;
     }
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
+    else if(password !== Confirmpassword )
+    {
+      setSnackbarMessage('Passwords do not match');
+      setOpenSnackbar(true);
       return;
     }
-    setLoading(true);
     try {
-      await axios.post('http://localhost:5006/signup', {
-        username,
-        email,
-        password
-      });
-      setOpen(true);
-      setTimeout(() => {
-        setLoading(false);
-        navigate('/login');
-      }, 1000); // Redirect after 1 second
-    } catch (err) {
-      setLoading(false);
-      setError('Error registering user');
+      const response = await axios.post('http://localhost:5000/users', { username, email, password,Confirmpassword });
+      setSnackbarMessage('Signup successful');
+      setOpenSnackbar(true);
+      setUsername('');
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
+    } catch (error) {
+      setSnackbarMessage('Error signing up');
+      setOpenSnackbar(true);
+      console.error('Error signing up:', error);
     }
   };
 
-  const handleClose = (event, reason) => {
+  const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
-    setOpen(false);
+    setOpenSnackbar(false);
   };
 
   return (
@@ -79,59 +77,59 @@ const Signup = () => {
             boxShadow: '0 3px 5px rgba(0,0,0,5)'
           }}
         >
-          <Typography variant="h4">Signup</Typography>
-          {error && <Alert severity="error">{error}</Alert>}
-          <form onSubmit={handleSubmit}>
-            <TextField
-              label="Username"
-              variant="outlined"
-              margin="normal"
-              fullWidth
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-            <TextField
-              label="Email"
-              variant="outlined"
-              margin="normal"
-              fullWidth
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <TextField
-              label="Password"
-              type="password"
-              variant="outlined"
-              margin="normal"
-              fullWidth
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <TextField
-              label="Confirm Password"
-              type="password"
-              variant="outlined"
-              margin="normal"
-              fullWidth
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-            <Button type="submit" variant="contained" color="primary" fullWidth>
-              Create Account
-            </Button>
-          </form>
-          <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
-            <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-              Signup successful! Redirecting to login...
-            </Alert>
-          </Snackbar>
-          {loading && (
-            <Box display="flex" alignItems="center" justifyContent="center" mt={2}>
-              <CircularProgress />
-              <img src={customIcon} alt="Loading" style={{ width: 50, height: 50, marginLeft: 10 }} />
-            </Box>
-          )}
-        </Box>
+        <Typography variant="h6" gutterBottom>
+          Signup
+        </Typography>
+        <form onSubmit={handleSignup}>
+          <TextField
+            label="Username"
+            variant="outlined"
+            fullWidth
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            sx={{ mb: 2 }}
+          />
+           <TextField
+            label="Email"
+            type="email"
+            variant="outlined"
+            fullWidth
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            label="Password"
+            type="password"
+            variant="outlined"
+            fullWidth
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            sx={{ mb: 2 }}
+          />
+           <TextField
+            label="Confirm Password"
+            type="password"
+            variant="outlined"
+            fullWidth
+            value={Confirmpassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            sx={{ mb: 2 }}
+          />
+          <Button type="submit" variant="contained" color="primary" fullWidth>
+            Signup
+          </Button>
+        </form>
+      </Box>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
       </Container>
     </>
   );
