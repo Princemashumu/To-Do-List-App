@@ -52,5 +52,59 @@
       "password": "12345",
       "Confirmpassword": "12345"
     }
-  ]
+  ],
+  "add-task": [
+    {
+      "id": "e9c7",
+      "userId": "3f7a",
+      "task": "i need to complete jason server lesson ",
+      "taskDate": "2024-08-16",
+      "taskPriority": "Medium"
+    },
+    {
+      "id": "d9af",
+      "userId": "3f7a",
+      "task": "trying",
+      "taskDate": "2024-08-10",
+      "taskPriority": "High"
+    },
+    {
+      "id": "a631",
+      "userId": "3f7a",
+      "task": "lunch",
+      "taskDate": "2024-08-02",
+      "taskPriority": "Medium"
+    },
+    {
+      "id": "43f5",
+      "userId": "3f7a",
+      "task": "Code sleep repeat",
+      "taskDate": "2024-08-06",
+      "taskPriority": "Medium"
+    },
+    {
+      "id": "dc7b",
+      "userId": "3f7a",
+      "task": "code",
+      "taskDate": "2024-08-21",
+      "taskPriority": "Low"
+    },
+    {
+      "id": "d3fd",
+      "userId": "3f7a",
+      "task": "jason server backend done",
+      "taskDate": "2024-08-22",
+      "taskPriority": "Low"
+    },
+    {
+      "id": "02b5",
+      "userId": "3f7a",
+      "task": "i want to do coding",
+      "taskDate": "2024-08-03",
+      "taskPriority": "Medium"
+    }
+  ],
+  "edit-task": [],
+  "delete-task": [],
+  "update-profile": []
 }

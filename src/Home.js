@@ -53,11 +53,11 @@ const Home = () => {
     const fetchTasks = async () => {
       const userId = localStorage.getItem('userId');
       try {
-        const response = await axios.get(`http://localhost:5006/tasks?userId=${userId}`);
-        setTasks(response.data.tasks);
+        const response = await axios.get(`http://localhost:5000/add-task?userId=${userId}`);
+        setTasks(response.data);
         // Fetch user profile data
-        const userResponse = await axios.get(`http://localhost:5006/user?userId=${userId}`);
-        setUser(userResponse.data.user);
+        const userResponse = await axios.get(`http://localhost:5000/users?userId=${userId}`);
+        setUser(userResponse.data);
       } catch (error) {
         console.error('Error fetching tasks:', error);
       }
@@ -66,7 +66,6 @@ const Home = () => {
     fetchTasks();
   }, []);
 
-
   const handleSignOut = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('userId');
@@ -74,7 +73,7 @@ const Home = () => {
   };
 
   const handleProfile = () => {
-    setView('seetings'); // Switch to profile view
+    setView('profile'); // Switch to profile view
   };
 
   const toggleDrawer = (open) => (event) => {
@@ -95,9 +94,9 @@ const Home = () => {
     try {
       let response;
       if (editTaskId) {
-        response = await axios.put(`http://localhost:5006/edit-task/${editTaskId}`, { task, taskDate, taskPriority });
+        response = await axios.put(`http://localhost:5000/edit-task/${editTaskId}`, { task, taskDate, taskPriority });
       } else {
-        response = await axios.post('http://localhost:5006/add-task', { userId, task, taskDate, taskPriority });
+        response = await axios.post('http://localhost:5000/add-task', { userId, task, taskDate, taskPriority });
       }
       setSnackbarMessage(response.data.message);
       setOpenSnackbar(true);
@@ -105,15 +104,14 @@ const Home = () => {
       setTaskDate('');
       setTaskPriority('');
       setEditTaskId(null);
-      const fetchResponse = await axios.get(`http://localhost:5006/tasks?userId=${userId}`);
-      setTasks(fetchResponse.data.tasks);
+      const fetchResponse = await axios.get(`http://localhost:5000/tasks?userId=${userId}`);
+      setTasks(fetchResponse.data);
     } catch (error) {
       console.error('Error adding task:', error.response ? error.response.data : error.message);
-      setSnackbarMessage('Succes!');
+      setSnackbarMessage('Error adding task');
       setOpenSnackbar(true);
     }
   };
-  
 
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -131,12 +129,12 @@ const Home = () => {
 
   const handleDeleteTask = async (taskId) => {
     try {
-      const response = await axios.delete(`http://localhost:5006/delete-task/${taskId}`);
+      const response = await axios.delete(`http://localhost:5000/delete-task/${taskId}`);
       setSnackbarMessage(response.data.message);
       setOpenSnackbar(true);
       const userId = localStorage.getItem('userId');
-      const fetchResponse = await axios.get(`http://localhost:5006/tasks?userId=${userId}`);
-      setTasks(fetchResponse.data.tasks);
+      const fetchResponse = await axios.get(`http://localhost:5000/tasks?userId=${userId}`);
+      setTasks(fetchResponse.data);
     } catch (error) {
       setSnackbarMessage('Error deleting task');
       setOpenSnackbar(true);
@@ -148,8 +146,8 @@ const Home = () => {
     setSearchQuery(e.target.value);
     const userId = localStorage.getItem('userId');
     try {
-      const response = await axios.get(`http://localhost:5006/search-tasks?userId=${userId}&query=${e.target.value}`);
-      setTasks(response.data.tasks);
+      const response = await axios.get(`http://localhost:5000/search-tasks?userId=${userId}&query=${e.target.value}`);
+      setTasks(response.data);
     } catch (error) {
       console.error('Error searching tasks:', error);
     }
@@ -222,6 +220,7 @@ const Home = () => {
         return 'grey';
     }
   };
+
   return (
     <>
       <AppBar position="static" sx={{ backgroundColor: 'black' }}>
@@ -374,35 +373,28 @@ const Home = () => {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-  {Array.isArray(tasks) && tasks.length > 0 ? (
-    tasks.map((task) =>
-      task ? (
-        <TableRow key={task.id} sx={{ backgroundColor: getPriorityColor(task.taskPriority) }}>
-          <TableCell>{task.task || 'No task'}</TableCell>
-          <TableCell>{task.taskDate || 'No date'}</TableCell>
-          <TableCell>{task.taskPriority || 'No priority'}</TableCell>
-          <TableCell align="right">
-            <IconButton color="primary" onClick={() => handleEditTask(task)}>
-              <EditIcon />
-            </IconButton>
-            <IconButton color="secondary" onClick={() => handleDeleteTask(task.id)}>
-              <DeleteIcon />
-            </IconButton>
-          </TableCell>
-        </TableRow>
-      ) : (
-        <TableRow key="empty">
-          <TableCell colSpan={4}>No tasks available</TableCell>
-        </TableRow>
-      )
-    )
-  ) : (
-    <TableRow key="no-data">
-      <TableCell colSpan={4}>No tasks available</TableCell>
-    </TableRow>
-  )}
-</TableBody>
-
+                          {Array.isArray(tasks) && tasks.length > 0 ? (
+                            tasks.map((task) => (
+                              <TableRow key={task.id} sx={{ backgroundColor: getPriorityColor(task.taskPriority) }}>
+                                <TableCell>{task.task}</TableCell>
+                                <TableCell>{task.taskDate}</TableCell>
+                                <TableCell>{task.taskPriority}</TableCell>
+                                <TableCell align="right">
+                                  <IconButton color="primary" onClick={() => handleEditTask(task)}>
+                                    <EditIcon />
+                                  </IconButton>
+                                  <IconButton color="secondary" onClick={() => handleDeleteTask(task.id)}>
+                                    <DeleteIcon />
+                                  </IconButton>
+                                </TableCell>
+                              </TableRow>
+                            ))
+                          ) : (
+                            <TableRow>
+                              <TableCell colSpan={4}>No tasks available</TableCell>
+                            </TableRow>
+                          )}
+                        </TableBody>
                       </Table>
                     </TableContainer>
                   </Box>
