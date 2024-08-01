@@ -94,9 +94,12 @@ const Home = () => {
     try {
       let response;
       if (editTaskId) {
-        response = await axios.put(`http://localhost:5000/edit-task/${editTaskId}`, { task, taskDate, taskPriority });
+        response = await axios.put(`http://localhost:5000/add-task/${editTaskId}`, { task, taskDate, taskPriority });
+      
+
       } else {
         response = await axios.post('http://localhost:5000/add-task', { userId, task, taskDate, taskPriority });
+      
       }
       setSnackbarMessage(response.data.message);
       setOpenSnackbar(true);
@@ -104,12 +107,11 @@ const Home = () => {
       setTaskDate('');
       setTaskPriority('');
       setEditTaskId(null);
-      const fetchResponse = await axios.get(`http://localhost:5000/tasks?userId=${userId}`);
+      const fetchResponse = await axios.get(`http://localhost:5000/add-task?userId=${userId}`);
       setTasks(fetchResponse.data);
     } catch (error) {
       console.error('Error adding task:', error.response ? error.response.data : error.message);
-      setSnackbarMessage('Error adding task');
-      setOpenSnackbar(true);
+    
     }
   };
 
@@ -125,20 +127,22 @@ const Home = () => {
     setTaskDate(task.taskDate);
     setTaskPriority(task.taskPriority);
     setEditTaskId(task.id);
+    
   };
 
   const handleDeleteTask = async (taskId) => {
     try {
-      const response = await axios.delete(`http://localhost:5000/delete-task/${taskId}`);
-      setSnackbarMessage(response.data.message);
+      const response = await axios.delete(`http://localhost:5000/add-task/${taskId}`);
+      setSnackbarMessage('Task successfully deleted');
       setOpenSnackbar(true);
       const userId = localStorage.getItem('userId');
-      const fetchResponse = await axios.get(`http://localhost:5000/tasks?userId=${userId}`);
+      const fetchResponse = await axios.get(`http://localhost:5000/add-task?userId=${userId}`);
       setTasks(fetchResponse.data);
     } catch (error) {
       setSnackbarMessage('Error deleting task');
       setOpenSnackbar(true);
-      console.error('Error deleting task:', error);
+      // console.error('Error deleting task:', error);
+      console.error('Error deleting task:', error.response ? error.response.data : error.message);
     }
   };
 
@@ -146,7 +150,7 @@ const Home = () => {
     setSearchQuery(e.target.value);
     const userId = localStorage.getItem('userId');
     try {
-      const response = await axios.get(`http://localhost:5000/search-tasks?userId=${userId}&query=${e.target.value}`);
+      const response = await axios.get(`http://localhost:5000/add-task?userId=${userId}&query=${e.target.value}`);
       setTasks(response.data);
     } catch (error) {
       console.error('Error searching tasks:', error);

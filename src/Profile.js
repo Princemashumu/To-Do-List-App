@@ -1,28 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Container, TextField, Button, Avatar, Snackbar, Alert } from '@mui/material';
+import { Box, Container, TextField, Button, Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
 
 const Profile = ({ user, setUser }) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [profilePicture, setProfilePicture] = useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
   useEffect(() => {
     const fetchUserDetails = async () => {
       const userId = localStorage.getItem('userId');
-      console.log('Fetching user details for userId:', userId); // Debugging log
+      console.log('Fetching user details for userId:', userId);
       try {
         const response = await axios.get(`http://localhost:5000/users?userId=${userId}`);
-        console.log('Fetched user data:', response.data.user); // Debugging log
-        const userData = response.data.user;
+        console.log('Fetched user data:', response.data.user);
+        const userData = response.data.users;
         setUsername(userData.username);
         setEmail(userData.email);
-        setProfilePicture(userData.profilePicture);
       } catch (error) {
-        console.error('Error fetching user details:', error);
+        console.error('Error fetching user details:', error.response?.data || error.message);
       }
     };
 
@@ -33,19 +31,18 @@ const Profile = ({ user, setUser }) => {
     e.preventDefault();
     const userId = localStorage.getItem('userId');
     try {
-      const response = await axios.put('http://localhost:5000/update-profile', {
-        userId,
+      const response = await axios.post('http://localhost:5000/users', {
+        // userId, // Ensure this is sent if required by your backend
         username,
         email,
-        password,
-        profilePicture
+        password
       });
-      console.log('Updated user data:', response.data.user); // Debugging log
+      console.log('Updated user data:', response.data.user);
       setUser(response.data.user);
       setSnackbarMessage('Profile updated successfully!');
       setOpenSnackbar(true);
     } catch (error) {
-      console.error('Error updating profile:', error);
+      console.error('Error updating profile:', error.response?.data || error.message);
       setSnackbarMessage('Error updating profile');
       setOpenSnackbar(true);
     }
@@ -57,15 +54,14 @@ const Profile = ({ user, setUser }) => {
       const formData = new FormData();
       formData.append('file', file);
       try {
-        const response = await axios.post('http://localhost:5000/update-profile', formData, {
+        const response = await axios.post('http://localhost:5000/users', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
         });
-        console.log('Uploaded profile picture URL:', response.data.profilePictureUrl); // Debugging log
-        setProfilePicture(response.data.profilePictureUrl);
+        
       } catch (error) {
-        console.error('Error uploading file:', error);
+        console.error('Error uploading file:', error.response?.data || error.message);
         setSnackbarMessage('Error uploading file');
         setOpenSnackbar(true);
       }
@@ -82,12 +78,6 @@ const Profile = ({ user, setUser }) => {
   return (
     <Container>
       <Box mt={4} display="flex" flexDirection="column" alignItems="center">
-        <Typography variant="h4">My Profile</Typography>
-        <Avatar
-          alt={username}
-          src={profilePicture || '/default-profile.png'} // Default image if none uploaded
-          sx={{ width: 100, height: 100, my: 2 }}
-        />
         <input
           accept="image/*"
           style={{ display: 'none' }}
@@ -95,11 +85,6 @@ const Profile = ({ user, setUser }) => {
           type="file"
           onChange={handleFileChange}
         />
-        <label htmlFor="profile-picture-upload">
-          <Button variant="contained" component="span">
-            Upload Profile Picture
-          </Button>
-        </label>
         <Box mt={2} width="100%" maxWidth="600px">
           <form onSubmit={handleUpdateProfile}>
             <TextField
@@ -138,7 +123,7 @@ const Profile = ({ user, setUser }) => {
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
       >
-        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+        <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
           {snackbarMessage}
         </Alert>
       </Snackbar>
