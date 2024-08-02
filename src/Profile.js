@@ -31,7 +31,7 @@ const Profile = ({ user, setUser }) => {
     e.preventDefault();
     const userId = localStorage.getItem('userId');
     try {
-      const response = await axios.post('http://localhost:5000/updated-users', {
+      const response = await axios.post('http://localhost:5000/users', {
         userId, // Ensure this is sent if required by your backend
         username,
         email,

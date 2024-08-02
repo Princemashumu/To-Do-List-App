@@ -49,6 +49,7 @@ const Home = () => {
   const [user, setUser] = useState({});
   const navigate = useNavigate();
 
+  
   useEffect(() => {
     const fetchTasks = async () => {
       const userId = localStorage.getItem('userId');
@@ -147,10 +148,13 @@ const Home = () => {
   };
 
   const handleSearch = async (e) => {
-    setSearchQuery(e.target.value);
+    const query = e.target.value;
+    setSearchQuery(query);
     const userId = localStorage.getItem('userId');
+    console.log('Search query:', query); // Add this line to debug
     try {
-      const response = await axios.get(`http://localhost:5000/add-task?userId=${userId}&query=${e.target.value}`);
+      const response = await axios.get(`http://localhost:5000/add-task?userId=${userId}&query=${query}`);
+      // console.log('Search response:', response.data); // Add this line to debug
       setTasks(response.data);
     } catch (error) {
       console.error('Error searching tasks:', error);
@@ -217,7 +221,7 @@ const Home = () => {
       case 'Low':
         return 'green';
       case 'Medium':
-        return 'orange';
+        return 'yellow';
       case 'High':
         return 'red';
       default:
@@ -285,7 +289,7 @@ const Home = () => {
         alignItems="center"
         justifyContent="flex-start"
         minHeight="100vh"
-        sx={{ background: 'url(/path/to/your/background-image.jpg) no-repeat left center fixed', backgroundSize: 'cover' }}
+        sx={{ background: 'url(/backgroundimg1.jpg) no-repeat left center fixed', backgroundSize: 'cover' }}
       >
         <Drawer open={drawerOpen} onClose={toggleDrawer(false)}>
           {list()}

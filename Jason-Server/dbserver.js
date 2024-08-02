@@ -50,3 +50,18 @@ app.delete('/delete-task/:id', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+app.get('/add-task', async (req, res) => {
+  const userId = req.query.userId;
+  const query = req.query.query || '';
+
+  try {
+    const tasks = await Task.find({
+      userId: userId,
+      task: { $regex: query, $options: 'i' } // This regex filters tasks based on the query (case-insensitive)
+    });
+    res.json(tasks);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});

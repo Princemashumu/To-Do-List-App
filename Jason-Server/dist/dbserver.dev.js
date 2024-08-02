@@ -98,3 +98,41 @@ app["delete"]('/delete-task/:id', function (req, res) {
 app.listen(PORT, function () {
   console.log("Server is running on port ".concat(PORT));
 });
+app.get('/add-task', function _callee(req, res) {
+  var userId, query, _tasks;
+
+  return regeneratorRuntime.async(function _callee$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          userId = req.query.userId;
+          query = req.query.query || '';
+          _context.prev = 2;
+          _context.next = 5;
+          return regeneratorRuntime.awrap(Task.find({
+            userId: userId,
+            task: {
+              $regex: query,
+              $options: 'i'
+            } // This regex filters tasks based on the query (case-insensitive)
+
+          }));
+
+        case 5:
+          _tasks = _context.sent;
+          res.json(_tasks);
+          _context.next = 12;
+          break;
+
+        case 9:
+          _context.prev = 9;
+          _context.t0 = _context["catch"](2);
+          res.status(500).send(_context.t0);
+
+        case 12:
+        case "end":
+          return _context.stop();
+      }
+    }
+  }, null, null, [[2, 9]]);
+});

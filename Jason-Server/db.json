@@ -179,46 +179,99 @@
       "email": "dipuo@gmail.com",
       "password": "888",
       "Confirmpassword": "888"
+    },
+    {
+      "id": "7e1b",
+      "username": "kim",
+      "email": "kim@gmail.com",
+      "password": "kim123",
+      "Confirmpassword": "kim123"
+    },
+    {
+      "id": "4d2d",
+      "username": "mia",
+      "email": "mia@gmail.com",
+      "password": "mia123",
+      "Confirmpassword": "mia123"
+    },
+    {
+      "id": "53e8",
+      "userId": "4d2d",
+      "username": "mia",
+      "email": "",
+      "password": "mia123"
+    },
+    {
+      "id": "36b8",
+      "userId": "4d2d",
+      "username": "miaw",
+      "email": "",
+      "password": "mia123"
+    },
+    {
+      "id": "9bec",
+      "username": "zain",
+      "email": "zain@gmail.com",
+      "password": "zain123",
+      "Confirmpassword": "zain123"
+    },
+    {
+      "id": "ed11",
+      "username": "baki",
+      "email": "baki@gmail.com",
+      "password": "baki123",
+      "Confirmpassword": "baki123"
+    },
+    {
+      "id": "2ff3",
+      "username": "zako",
+      "email": "zako@gmail.com",
+      "password": "zako123",
+      "Confirmpassword": "zako123"
+    },
+    {
+      "id": "5979",
+      "username": "klein",
+      "email": "klein@gmail.com",
+      "password": "klein123",
+      "Confirmpassword": "klein123"
+    },
+    {
+      "id": "a2d0",
+      "email": "peekay@gmail.com"
+    },
+    {
+      "id": "cb40",
+      "email": "princengwakomashumu@gmail.com"
     }
   ],
   "add-task": [
-    {
-      "task": "Code sleep repeat",
-      "taskDate": "2024-08-06",
-      "taskPriority": "High",
-      "id": "43f5"
-    },
-    {
-      "task": "code",
-      "taskDate": "2024-08-21",
-      "taskPriority": "Medium",
-      "id": "dc7b"
-    },
-    {
-      "id": "d3fd",
-      "userId": "3f7a",
-      "task": "jason server backend done",
-      "taskDate": "2024-08-22",
-      "taskPriority": "Low"
-    },
-    {
-      "id": "02b5",
-      "userId": "3f7a",
-      "task": "i want to do coding",
-      "taskDate": "2024-08-03",
-      "taskPriority": "Medium"
-    },
-    {
-      "task": "i am the best programmer",
-      "taskDate": "2024-08-02",
-      "taskPriority": "Low",
-      "id": "d3fe"
-    },
     {
       "id": "b87d",
       "userId": "298a",
       "task": "coding",
       "taskDate": "2024-08-10",
+      "taskPriority": "Low"
+    },
+    {
+      "id": "3e82",
+      "userId": "4d2d",
+      "task": "work overnight ",
+      "taskDate": "2024-08-02",
+      "taskPriority": "High"
+    },
+    {
+      "id": "7d9e",
+      "userId": "3f7a",
+      "task": "i am the best backend programmer",
+      "taskDate": "2024-08-02",
+      "taskPriority": "High"
+    },
+    {
+      "id": "9de9",
+      "userId": "9bec",
+      "task": "go to shopping",
+      "taskDate": "2024-08-09",
       "taskPriority": "Low"
     }
   ],
@@ -229,9 +282,19 @@
       "username": "wam",
       "email": "wam@gmail.com",
       "password": "222"
+    },
+    {
+      "id": "413b",
+      "userId": "4d2d",
+      "username": "miaa",
+      "email": "",
+      "password": "mia123"
     }
   ],
-  "edit-task": [],
-  "delete-task": [],
-  "update-profile": []
+  "reset-password": [
+    {
+      "id": "e89e",
+      "email": "peekay@gmail.com"
+    }
+  ]
 }
