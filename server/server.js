@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
 const cors = require('cors');
+const getTasksFromDatabase = require('./tasks.db');
 
 const app = express();
 const port = 5006; // Change this to a different port if needed
@@ -65,6 +66,7 @@ app.post('/add-task', (req, res) => {
   });
 });
 const { getTasksFromDatabase } = require('C:\Users\User\Documents\Code Tribe\ACADEMY\todolistapp\server\tasks.db');
+
 // Get tasks
 app.get('/tasks', async (req, res) => {
   const { userId } = req.query;

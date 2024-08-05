@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Typography,
@@ -26,82 +26,65 @@ import {
   FormControl,
   InputLabel,
   Select,
-} from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import MenuIcon from '@mui/icons-material/Menu';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import axios from 'axios';
-import Profile from './Profile'; // Import Profile component
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import MenuIcon from "@mui/icons-material/Menu";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import axios from "axios";
+import Profile from "./Profile"; // Import Profile component
 
 const Home = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [task, setTask] = useState('');
-  const [taskDate, setTaskDate] = useState('');
-  const [taskPriority, setTaskPriority] = useState('');
+  const [task, setTask] = useState("");
+  const [taskDate, setTaskDate] = useState("");
+  const [taskPriority, setTaskPriority] = useState("");
   const [tasks, setTasks] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarMessage, setSnackbarMessage] = useState("");
   const [editTaskId, setEditTaskId] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [view, setView] = useState('tasks'); // New state to manage views
+  const [view, setView] = useState("tasks"); // New state to manage views
   const [user, setUser] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTasks = async () => {
-      const userId = localStorage.getItem('userId');
+      const userId = localStorage.getItem("userId");
       try {
-        const response = await axios.get(`http://localhost:5006/tasks?userId=${userId}`);
+        const response = await axios.get(
+          `http://localhost:5006/tasks?userId=${userId}`
+        );
         setTasks(response.data.tasks);
         // Fetch user profile data
-        const userResponse = await axios.get(`http://localhost:5006/user?userId=${userId}`);
+        const userResponse = await axios.get(
+          `http://localhost:5006/user?userId=${userId}`
+        );
         setUser(userResponse.data.user);
       } catch (error) {
-        console.error('Error fetching tasks:', error);
+        console.error("Error fetching tasks:", error);
       }
     };
 
     fetchTasks();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchTasks = async () => {
-  //     const userId = localStorage.getItem('userId');
-  //     try {
-  //       const response = await axios.get(`http://localhost:5006/tasks`, {
-  //         params: { userId }
-  //       });
-  //       if (Array.isArray(response.data.tasks)) {
-  //         setTasks(response.data.tasks);
-  //       } else {
-  //         setTasks([]);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching tasks:', error);
-  //       setTasks([]);
-  //     }
-  //   };
-  
-  //   fetchTasks();
-  // }, []);
-  
-  
-  
-
   const handleSignOut = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userId');
-    navigate('/login');
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userId");
+    navigate("/login");
   };
 
   const handleProfile = () => {
-    setView('seetings'); // Switch to profile view
+    setView("seetings"); // Switch to profile view
   };
 
   const toggleDrawer = (open) => (event) => {
-    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+    if (
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
       return;
     }
     setDrawerOpen(open);
@@ -109,38 +92,50 @@ const Home = () => {
 
   const handleTaskSubmit = async (e) => {
     e.preventDefault();
-    const userId = localStorage.getItem('userId');
+    const userId = localStorage.getItem("userId");
     if (!task || !taskDate || !taskPriority) {
-      setSnackbarMessage('Task, Date, and Priority cannot be empty');
+      setSnackbarMessage("Task, Date, and Priority cannot be empty");
       setOpenSnackbar(true);
       return;
     }
     try {
       let response;
       if (editTaskId) {
-        response = await axios.put(`http://localhost:5006/edit-task/${editTaskId}`, { task, taskDate, taskPriority });
+        response = await axios.put(
+          `http://localhost:5006/edit-task/${editTaskId}`,
+          { task, taskDate, taskPriority }
+        );
       } else {
-        response = await axios.post('http://localhost:5006/add-task', { userId, task, taskDate, taskPriority });
+        response = await axios.post("http://localhost:5006/add-task", {
+          userId,
+          task,
+          taskDate,
+          taskPriority,
+        });
       }
       setSnackbarMessage(response.data.message);
       setOpenSnackbar(true);
-      setTask('');
-      setTaskDate('');
-      setTaskPriority('');
+      setTask("");
+      setTaskDate("");
+      setTaskPriority("");
       setEditTaskId(null);
-      const fetchResponse = await axios.get(`http://localhost:5006/tasks?userId=${userId}`);
+      const fetchResponse = await axios.get(
+        `http://localhost:5006/tasks?userId=${userId}`
+      );
       setTasks(fetchResponse.data.tasks);
     } catch (error) {
       // console.error('Error adding task:', error.response ? error.response.data : error.message);
-      console.error('Error adding task:', error.response ? error.response.data : error.message);
-      setSnackbarMessage('Succes!Task Added');
+      console.error(
+        "Error adding task:",
+        error.response ? error.response.data : error.message
+      );
+      setSnackbarMessage("Succes!Task Added");
       setOpenSnackbar(true);
     }
   };
-  
 
   const handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
+    if (reason === "clickaway") {
       return;
     }
     setOpenSnackbar(false);
@@ -155,27 +150,33 @@ const Home = () => {
 
   const handleDeleteTask = async (taskId) => {
     try {
-      const response = await axios.delete(`http://localhost:5006/delete-task/${taskId}`);
+      const response = await axios.delete(
+        `http://localhost:5006/delete-task/${taskId}`
+      );
       setSnackbarMessage(response.data.message);
       setOpenSnackbar(true);
-      const userId = localStorage.getItem('userId');
-      const fetchResponse = await axios.get(`http://localhost:5006/tasks?userId=${userId}`);
+      const userId = localStorage.getItem("userId");
+      const fetchResponse = await axios.get(
+        `http://localhost:5006/tasks?userId=${userId}`
+      );
       setTasks(fetchResponse.data.tasks);
     } catch (error) {
-      setSnackbarMessage('Error deleting task');
+      setSnackbarMessage("Error deleting task");
       setOpenSnackbar(true);
-      console.error('Error deleting task:', error);
+      console.error("Error deleting task:", error);
     }
   };
 
   const handleSearch = async (e) => {
     setSearchQuery(e.target.value);
-    const userId = localStorage.getItem('userId');
+    const userId = localStorage.getItem("userId");
     try {
-      const response = await axios.get(`http://localhost:5006/search-tasks?userId=${userId}&query=${e.target.value}`);
+      const response = await axios.get(
+        `http://localhost:5006/search-tasks?userId=${userId}&query=${e.target.value}`
+      );
       setTasks(response.data.tasks);
     } catch (error) {
-      console.error('Error searching tasks:', error);
+      console.error("Error searching tasks:", error);
     }
   };
 
@@ -188,18 +189,18 @@ const Home = () => {
   };
 
   const handleMenuClick = (option) => {
-    if (option === 'Sign Out') {
+    if (option === "Sign Out") {
       handleSignOut();
-    } else if (option === 'Profile') {
+    } else if (option === "Profile") {
       handleProfile();
     }
     handleClose();
   };
 
   const menuItems = [
-    { text: 'Home', onClick: () => setView('tasks') },
-    { text: 'Profile', onClick: handleProfile },
-    { text: 'Sign Out', onClick: handleSignOut }
+    { text: "Home", onClick: () => setView("tasks") },
+    { text: "Profile", onClick: handleProfile },
+    { text: "Sign Out", onClick: handleSignOut },
   ];
 
   const list = () => (
@@ -222,7 +223,10 @@ const Home = () => {
         {Array.isArray(tasks) ? (
           tasks.map((task) => (
             <ListItem key={task.id}>
-              <ListItemText primary={task.task} secondary={`Due: ${task.taskDate}`} />
+              <ListItemText
+                primary={task.task}
+                secondary={`Due: ${task.taskDate}`}
+              />
             </ListItem>
           ))
         ) : (
@@ -236,19 +240,19 @@ const Home = () => {
 
   const getPriorityColor = (priority) => {
     switch (priority) {
-      case 'Low':
-        return 'green';
-      case 'Medium':
-        return 'orange';
-      case 'High':
-        return 'red';
+      case "Low":
+        return "green";
+      case "Medium":
+        return "orange";
+      case "High":
+        return "red";
       default:
-        return 'grey';
+        return "grey";
     }
   };
   return (
     <>
-      <AppBar position="static" sx={{ backgroundColor: 'black' }}>
+      <AppBar position="static" sx={{ backgroundColor: "black" }}>
         <Toolbar>
           <IconButton
             edge="start"
@@ -265,7 +269,7 @@ const Home = () => {
             size="small"
             value={searchQuery}
             onChange={handleSearch}
-            sx={{ backgroundColor: 'white', borderRadius: '5px' }}
+            sx={{ backgroundColor: "white", borderRadius: "5px" }}
           />
           <IconButton
             edge="end"
@@ -281,13 +285,13 @@ const Home = () => {
             id="menu-appbar"
             anchorEl={anchorEl}
             anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
+              vertical: "top",
+              horizontal: "right",
             }}
             keepMounted
             transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
+              vertical: "top",
+              horizontal: "right",
             }}
             open={Boolean(anchorEl)}
             onClose={handleClose}
@@ -306,15 +310,24 @@ const Home = () => {
         alignItems="center"
         justifyContent="flex-start"
         minHeight="100vh"
-        sx={{ background: 'url(/path/to/your/background-image.jpg) no-repeat left center fixed', backgroundSize: 'cover' }}
+        sx={{
+          background:
+            "url(/path/to/your/background-image.jpg) no-repeat left center fixed",
+          backgroundSize: "cover",
+        }}
       >
         <Drawer open={drawerOpen} onClose={toggleDrawer(false)}>
           {list()}
         </Drawer>
 
         <Container maxWidth="md" sx={{ marginTop: 4 }}>
-          {view === 'tasks' ? (
-            <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+          {view === "tasks" ? (
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="center"
+            >
               <Box width="100%">
                 <Container maxWidth="md">
                   <Box
@@ -323,10 +336,10 @@ const Home = () => {
                     alignItems="center"
                     justifyContent="center"
                     sx={{
-                      backgroundColor: 'white',
-                      padding: '20px',
-                      borderRadius: '10px',
-                      boxShadow: '0 3px 5px rgba(0,0,0,5)',
+                      backgroundColor: "white",
+                      padding: "20px",
+                      borderRadius: "10px",
+                      boxShadow: "0 3px 5px rgba(0,0,0,5)",
                     }}
                   >
                     <form onSubmit={handleTaskSubmit}>
@@ -362,8 +375,13 @@ const Home = () => {
                           <MenuItem value="Low">Low</MenuItem>
                         </Select>
                       </FormControl>
-                      <Button type="submit" variant="contained" color="primary" fullWidth>
-                        {editTaskId ? 'Update Task' : 'Add Task'}
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                      >
+                        {editTaskId ? "Update Task" : "Add Task"}
                       </Button>
                     </form>
                   </Box>
@@ -378,10 +396,10 @@ const Home = () => {
                     alignItems="center"
                     justifyContent="center"
                     sx={{
-                      backgroundColor: 'white',
-                      padding: '20px',
-                      borderRadius: '10px',
-                      boxShadow: '0 3px 5px rgba(0,0,0,5)',
+                      backgroundColor: "white",
+                      padding: "20px",
+                      borderRadius: "10px",
+                      boxShadow: "0 3px 5px rgba(0,0,0,5)",
                     }}
                   >
                     <Typography variant="h6" gutterBottom>
@@ -398,35 +416,57 @@ const Home = () => {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-  {Array.isArray(tasks) && tasks.length > 0 ? (
-    tasks.map((task) =>
-      task ? (
-        <TableRow key={task.id} sx={{ backgroundColor: getPriorityColor(task.taskPriority) }}>
-          <TableCell>{task.task || 'No task'}</TableCell>
-          <TableCell>{task.taskDate || 'No date'}</TableCell>
-          <TableCell>{task.taskPriority || 'No priority'}</TableCell>
-          <TableCell align="right">
-            <IconButton color="primary" onClick={() => handleEditTask(task)}>
-              <EditIcon />
-            </IconButton>
-            <IconButton color="secondary" onClick={() => handleDeleteTask(task.id)}>
-              <DeleteIcon />
-            </IconButton>
-          </TableCell>
-        </TableRow>
-      ) : (
-        <TableRow key="empty">
-          <TableCell colSpan={4}>No tasks available</TableCell>
-        </TableRow>
-      )
-    )
-  ) : (
-    <TableRow key="no-data">
-      <TableCell colSpan={4}>No tasks available</TableCell>
-    </TableRow>
-  )}
-</TableBody>
-
+                          {Array.isArray(tasks) && tasks.length > 0 ? (
+                            tasks.map((task) =>
+                              task ? (
+                                <TableRow
+                                  key={task.id}
+                                  sx={{
+                                    backgroundColor: getPriorityColor(
+                                      task.taskPriority
+                                    ),
+                                  }}
+                                >
+                                  <TableCell>
+                                    {task.task || "No task"}
+                                  </TableCell>
+                                  <TableCell>
+                                    {task.taskDate || "No date"}
+                                  </TableCell>
+                                  <TableCell>
+                                    {task.taskPriority || "No priority"}
+                                  </TableCell>
+                                  <TableCell align="right">
+                                    <IconButton
+                                      color="primary"
+                                      onClick={() => handleEditTask(task)}
+                                    >
+                                      <EditIcon />
+                                    </IconButton>
+                                    <IconButton
+                                      color="secondary"
+                                      onClick={() => handleDeleteTask(task.id)}
+                                    >
+                                      <DeleteIcon />
+                                    </IconButton>
+                                  </TableCell>
+                                </TableRow>
+                              ) : (
+                                <TableRow key="empty">
+                                  <TableCell colSpan={4}>
+                                    No tasks available
+                                  </TableCell>
+                                </TableRow>
+                              )
+                            )
+                          ) : (
+                            <TableRow key="no-data">
+                              <TableCell colSpan={4}>
+                                No tasks available
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </TableBody>
                       </Table>
                     </TableContainer>
                   </Box>
@@ -443,7 +483,11 @@ const Home = () => {
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
       >
-        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+        <Alert
+          onClose={handleSnackbarClose}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
           {snackbarMessage}
         </Alert>
       </Snackbar>
