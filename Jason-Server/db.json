@@ -243,6 +243,20 @@
     {
       "id": "cb40",
       "email": "princengwakomashumu@gmail.com"
+    },
+    {
+      "id": "803c",
+      "username": "thuto",
+      "email": "thuto@yahoo.com",
+      "password": "thuto123",
+      "Confirmpassword": "thuto123"
+    },
+    {
+      "id": "da37",
+      "username": "nhlaks",
+      "email": "nh@gmail.com",
+      "password": "nh123",
+      "Confirmpassword": "nh123"
     }
   ],
   "add-task": [
