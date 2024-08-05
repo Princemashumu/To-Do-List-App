@@ -24,6 +24,7 @@ const Login = () => {
     try {
       const response = await axios.post('http://localhost:5006/login', { username, password });
       localStorage.setItem('authToken', response.data.token);
+      localStorage.setItem('userId', response.data.userId);
       setOpen(true);
       setTimeout(() => {
         setLoading(false);
@@ -34,7 +35,7 @@ const Login = () => {
       setError('Invalid username or password');
     }
   };
-
+  
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;

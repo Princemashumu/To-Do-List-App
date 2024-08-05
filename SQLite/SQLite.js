@@ -2,9 +2,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const port = 5006;
+const SECRET_KEY = 'your-secret-key'; // Replace with your actual secret key
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -15,10 +17,11 @@ db.serialize(() => {
   db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, email TEXT, password TEXT)');
   db.run(`CREATE TABLE IF NOT EXISTS tasks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    userId TEXT,
+    userId INTEGER,
     task TEXT,
     taskDate TEXT,
-    taskPriority TEXT
+    taskPriority TEXT,
+    FOREIGN KEY(userId) REFERENCES users(id)
   )`);
 });
 
@@ -31,6 +34,19 @@ function getTasksFromDatabase(userId) {
       }
       resolve(rows);
     });
+  });
+}
+
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (token == null) return res.sendStatus(401);
+
+  jwt.verify(token, SECRET_KEY, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
   });
 }
 
@@ -53,17 +69,19 @@ app.post('/login', (req, res) => {
       return res.status(500).json({ error: err.message });
     }
     if (row) {
-      res.status(200).json({ message: 'Login successful', userId: row.id });
+      const user = { id: row.id, username: row.username };
+      const token = jwt.sign(user, SECRET_KEY, { expiresIn: '1h' });
+      res.status(200).json({ token });
     } else {
       res.status(400).json({ message: 'Invalid username or password' });
     }
   });
 });
 
-app.post('/add-task', (req, res) => {
-  const { userId, task, taskDate, taskPriority } = req.body;
+app.post('/add-task', authenticateToken, (req, res) => {
+  const { task, taskDate, taskPriority } = req.body;
   const query = `INSERT INTO tasks (userId, task, taskDate, taskPriority) VALUES (?, ?, ?, ?)`;
-  db.run(query, [userId, task, taskDate, taskPriority], function (err) {
+  db.run(query, [req.user.id, task, taskDate, taskPriority], function (err) {
     if (err) {
       return res.status(500).json({ message: 'Error adding task' });
     }
@@ -71,10 +89,9 @@ app.post('/add-task', (req, res) => {
   });
 });
 
-app.get('/tasks', async (req, res) => {
-  const { userId } = req.query;
+app.get('/tasks', authenticateToken, async (req, res) => {
   try {
-    const tasks = await getTasksFromDatabase(userId);
+    const tasks = await getTasksFromDatabase(req.user.id);
     res.json({ tasks });
   } catch (error) {
     console.error('Error fetching tasks:', error);
@@ -82,11 +99,11 @@ app.get('/tasks', async (req, res) => {
   }
 });
 
-app.put('/edit-task/:id', (req, res) => {
+app.put('/edit-task/:id', authenticateToken, (req, res) => {
   const taskId = req.params.id;
   const { task, taskDate, taskPriority } = req.body;
-  const query = `UPDATE tasks SET task = ?, taskDate = ?, taskPriority = ? WHERE id = ?`;
-  db.run(query, [task, taskDate, taskPriority, taskId], function (err) {
+  const query = `UPDATE tasks SET task = ?, taskDate = ?, taskPriority = ? WHERE id = ? AND userId = ?`;
+  db.run(query, [task, taskDate, taskPriority, taskId, req.user.id], function (err) {
     if (err) {
       return res.status(500).json({ message: 'Error updating task' });
     }
@@ -94,10 +111,10 @@ app.put('/edit-task/:id', (req, res) => {
   });
 });
 
-app.delete('/delete-task/:id', (req, res) => {
+app.delete('/delete-task/:id', authenticateToken, (req, res) => {
   const taskId = req.params.id;
-  const query = `DELETE FROM tasks WHERE id = ?`;
-  db.run(query, [taskId], function (err) {
+  const query = `DELETE FROM tasks WHERE id = ? AND userId = ?`;
+  db.run(query, [taskId, req.user.id], function (err) {
     if (err) {
       return res.status(500).json({ message: 'Error deleting task' });
     }

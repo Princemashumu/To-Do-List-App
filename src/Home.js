@@ -53,14 +53,10 @@ const Home = () => {
     const fetchTasks = async () => {
       const userId = localStorage.getItem("userId");
       try {
-        const response = await axios.get(
-          `http://localhost:5006/tasks?userId=${userId}`
-        );
-        setTasks(response.data.tasks);
+        const response =await axios.get(`http://localhost:5006/tasks?userId=${userId}`);
         // Fetch user profile data
-        const userResponse = await axios.get(
-          `http://localhost:5006/user?userId=${userId}`
-        );
+        const userResponse =await axios.get(`http://localhost:5006/tasks?userId=${userId}`);
+        setTasks(response.data.tasks );
         setUser(userResponse.data.user);
       } catch (error) {
         console.error("Error fetching tasks:", error);
@@ -217,7 +213,7 @@ const Home = () => {
         ))}
       </List>
       <Typography variant="h6" sx={{ padding: 2 }}>
-        Tasks
+        My tasks
       </Typography>
       <List>
         {Array.isArray(tasks) ? (
@@ -243,7 +239,7 @@ const Home = () => {
       case "Low":
         return "green";
       case "Medium":
-        return "orange";
+        return "yellow";
       case "High":
         return "red";
       default:
@@ -264,7 +260,7 @@ const Home = () => {
           </IconButton>
           <Box sx={{ flexGrow: 1 }} />
           <TextField
-            label="Search Tasks"
+            label="Search list"
             variant="outlined"
             size="small"
             value={searchQuery}
@@ -403,7 +399,6 @@ const Home = () => {
                     }}
                   >
                     <Typography variant="h6" gutterBottom>
-                      Tasks
                     </Typography>
                     <TableContainer component={Paper}>
                       <Table>
