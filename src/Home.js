@@ -51,20 +51,25 @@ const Home = () => {
 
   useEffect(() => {
     const fetchTasks = async () => {
-      const userId = localStorage.getItem("userId");
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        console.error('No token found');
+        return;
+      }
+  
       try {
-        const response =await axios.get(`http://localhost:5006/tasks?userId=${userId}`);
-        // Fetch user profile data
-        const userResponse =await axios.get(`http://localhost:5006/tasks?userId=${userId}`);
-        setTasks(response.data.tasks );
-        setUser(userResponse.data.user);
+        const response = await axios.get('http://localhost:5006/tasks', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        setTasks(response.data.tasks);
       } catch (error) {
-        console.error("Error fetching tasks:", error);
+        console.error('Error fetching tasks:', error);
       }
     };
-
+  
     fetchTasks();
   }, []);
+  
 
   const handleSignOut = () => {
     localStorage.removeItem("authToken");
@@ -73,7 +78,7 @@ const Home = () => {
   };
 
   const handleProfile = () => {
-    setView("seetings"); // Switch to profile view
+    setView("settings"); // Switch to profile view
   };
 
   const toggleDrawer = (open) => (event) => {
@@ -88,48 +93,70 @@ const Home = () => {
 
   const handleTaskSubmit = async (e) => {
     e.preventDefault();
-    const userId = localStorage.getItem("userId");
-    if (!task || !taskDate || !taskPriority) {
-      setSnackbarMessage("Task, Date, and Priority cannot be empty");
+  
+    // Validate task title
+    if (!task.trim()) {
+      setSnackbarMessage('Task title is required');
       setOpenSnackbar(true);
       return;
     }
+  
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      console.error('No token found');
+      return;
+    }
+  
     try {
-      let response;
       if (editTaskId) {
-        response = await axios.put(
-          `http://localhost:5006/edit-task/${editTaskId}`,
-          { task, taskDate, taskPriority }
-        );
-      } else {
-        response = await axios.post("http://localhost:5006/add-task", {
-          userId,
+        // Update task
+        const response = await axios.put(`http://localhost:5006/edit-task/${editTaskId}`, {
           task,
           taskDate,
           taskPriority,
+        }, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
         });
+  
+        setSnackbarMessage('Task updated successfully');
+      } else {
+        // Add new task
+        const response = await axios.post('http://localhost:5006/add-task', {
+          task,
+          taskDate,
+          taskPriority,
+        }, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+  
+        setSnackbarMessage('Task added successfully');
       }
-      setSnackbarMessage(response.data.message);
+  
       setOpenSnackbar(true);
-      setTask("");
-      setTaskDate("");
-      setTaskPriority("");
-      setEditTaskId(null);
-      const fetchResponse = await axios.get(
-        `http://localhost:5006/tasks?userId=${userId}`
-      );
+  
+      // Fetch the tasks again to update the list
+      const fetchResponse = await axios.get('http://localhost:5006/tasks', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
       setTasks(fetchResponse.data.tasks);
+  
+      // Clear the form fields and reset edit state
+      setTask('');
+      setTaskDate('');
+      setTaskPriority('');
+      setEditTaskId(null);
     } catch (error) {
-      // console.error('Error adding task:', error.response ? error.response.data : error.message);
-      console.error(
-        "Error adding task:",
-        error.response ? error.response.data : error.message
-      );
-      setSnackbarMessage("Succes!Task Added");
+      setSnackbarMessage(editTaskId ? 'Error updating task' : 'Error adding task');
       setOpenSnackbar(true);
+      console.error(editTaskId ? 'Error updating task:' : 'Error adding task:', error);
     }
   };
-
+  
+  
   const handleSnackbarClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -145,15 +172,19 @@ const Home = () => {
   };
 
   const handleDeleteTask = async (taskId) => {
+    const token = localStorage.getItem("authToken"); // Retrieve token
+
     try {
       const response = await axios.delete(
-        `http://localhost:5006/delete-task/${taskId}`
+        `http://localhost:5006/delete-task/${taskId}`,
+        { headers: { 'Authorization': `Bearer ${token}` } } // Add token to headers
       );
       setSnackbarMessage(response.data.message);
       setOpenSnackbar(true);
       const userId = localStorage.getItem("userId");
       const fetchResponse = await axios.get(
-        `http://localhost:5006/tasks?userId=${userId}`
+        `http://localhost:5006/tasks?userId=${userId}`,
+        { headers: { 'Authorization': `Bearer ${token}` } } // Add token to headers
       );
       setTasks(fetchResponse.data.tasks);
     } catch (error) {
@@ -166,9 +197,12 @@ const Home = () => {
   const handleSearch = async (e) => {
     setSearchQuery(e.target.value);
     const userId = localStorage.getItem("userId");
+    const token = localStorage.getItem("authToken"); // Retrieve token
+
     try {
       const response = await axios.get(
-        `http://localhost:5006/search-tasks?userId=${userId}&query=${e.target.value}`
+        `http://localhost:5006/search-tasks?userId=${userId}&query=${e.target.value}`,
+        { headers: { 'Authorization': `Bearer ${token}` } } // Add token to headers
       );
       setTasks(response.data.tasks);
     } catch (error) {
@@ -246,6 +280,7 @@ const Home = () => {
         return "grey";
     }
   };
+
   return (
     <>
       <AppBar position="static" sx={{ backgroundColor: "black" }}>
@@ -260,7 +295,7 @@ const Home = () => {
           </IconButton>
           <Box sx={{ flexGrow: 1 }} />
           <TextField
-            label="Search list"
+            label="Search tasks"
             variant="outlined"
             size="small"
             value={searchQuery}
@@ -372,13 +407,14 @@ const Home = () => {
                         </Select>
                       </FormControl>
                       <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                      >
-                        {editTaskId ? "Update Task" : "Add Task"}
-                      </Button>
+  type="submit"
+  variant="contained"
+  color="primary"
+  fullWidth
+  disabled={!task.trim()}
+>
+  {editTaskId ? "Update Task" : "Add Task"}
+</Button>
                     </form>
                   </Box>
                 </Container>
@@ -398,8 +434,7 @@ const Home = () => {
                       boxShadow: "0 3px 5px rgba(0,0,0,5)",
                     }}
                   >
-                    <Typography variant="h6" gutterBottom>
-                    </Typography>
+                    <Typography variant="h6" gutterBottom></Typography>
                     <TableContainer component={Paper}>
                       <Table>
                         <TableHead>
