@@ -12,7 +12,7 @@
 - User Profile: View and edit user profile.
 - Installation
 - Prerequisites
-- Make sure you have the following installed:
+-### Make sure you have the following installed:
 1. Node.js (v12 or higher)
 2. npm (comes with Node.js)
 3. SQLite3
