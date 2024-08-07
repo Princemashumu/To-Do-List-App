@@ -24,7 +24,7 @@
 > - [ ] Copy code
 > - [ ] git clone https://github.com/princemashumu/todo-app.git
 > - [ ] cd todo-app
-> - [ ]### Navigate to the backend directory and install the dependencies:
+### Navigate to the backend directory and install the dependencies:
 
 > - [ ] sh
 > - [ ] Copy code
@@ -40,7 +40,7 @@
 > - [ ] sh
 > - [ ] Copy code
 > - [ ] npm start
->### The backend server should be running on http://localhost:5006.
+### The backend server should be running on http://localhost:5006.
 
 ### Frontend Setup
 > - [ ] Navigate to the frontend directory and install the dependencies:
@@ -48,7 +48,7 @@
 > - [ ] Copy code
 > - [ ] cd ../frontend
 > - [ ] npm install
->### Start the frontend development server: 
+### Start the frontend development server: 
 > - [ ] sh
 > - [ ] Copy code
 > - [ ] npm start
