@@ -19,23 +19,24 @@
 4. Backend Setup
 5. Clone the repository:
 
+### Command Line Commands
 > - [ ] sh
 > - [ ] Copy code
 > - [ ] git clone https://github.com/princemashumu/todo-app.git
 > - [ ] cd todo-app
 > - [ ] Navigate to the backend directory and install the dependencies:
-> - [ ] 
+
 > - [ ] sh
 > - [ ] Copy code
 > - [ ] cd backend
 > - [ ] npm install
 > - [ ] Create an SQLite database and tables:
-> - [ ] 
+
 > - [ ] sh
 > - [ ] Copy code
 > - [ ] node setupDatabase.js
 > - [ ] Start the backend server:
-> - [ ] 
+
 > - [ ] sh
 > - [ ] Copy code
 > - [ ] npm start
@@ -55,16 +56,15 @@
 > - [ ] npm start
 > - [ ] The frontend should be running on http://localhost:3000.
 > - [ ] 
->
 
 
 ## API Endpoints
 **User Authentication**
 
-> Sign Up: POST /signup
+>### Sign Up: POST /signup
 > 
 > Request Body: { "username": "string", "email": "string", "password": "string" }
-> Login: POST /login
+>### Login: POST /login
 > 
 > Request Body: { "username": "string", "password": "string" }
 > Task Management
@@ -82,7 +82,7 @@
 > Delete Task: DELETE /delete-task/:id
 > 
 > Headers: { "Authorization": "Bearer <token>" }
-> Search Tasks: GET /search-tasks
+>### Search Tasks: GET /search-tasks
 > 
 > Headers: { "Authorization": "Bearer <token>" }
 > Query Params: ?query=<search-term>
