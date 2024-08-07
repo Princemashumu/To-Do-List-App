@@ -20,6 +20,8 @@
 5. Clone the repository:
 
 ### Command Line Commands
+
+### Clone the repository:
 > - [ ] sh
 > - [ ] Copy code
 > - [ ] git clone https://github.com/princemashumu/todo-app.git
