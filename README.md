@@ -1,7 +1,7 @@
 ## **To Do List App**
 
 
-### A simple and efficient ToDo application built with React, SQLite and Express.js, allowing users to manage their tasks effectively.
+### A simple and efficient ToDo application built with React, SQLite, Json Server and Express.js, allowing users to manage their tasks effectively.
 
 **Features**
 
