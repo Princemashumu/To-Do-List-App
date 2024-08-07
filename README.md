@@ -55,26 +55,8 @@
 > - [ ] npm start
 > - [ ] The frontend should be running on http://localhost:3000.
 > - [ ] 
-> 
+>
 
-## Project Structure
-
-> sh
-> Copy code
-> todo-app/
-> ├── backend/
-> │   ├── server.js        # Entry point for the backend server
-> │   ├── setupDatabase.js # Script to create database and tables
-> │   ├── package.json     # Backend dependencies
-> │   └── tasks.db         # SQLite database file
-> ├── frontend/
-> │   ├── src/
-> │   │   ├── components/  # React components
-> │   │   ├── App.js       # Main React component
-> │   │   ├── index.js     # Entry point for the React application
-> │   │   └── ...          # Other frontend files
-> │   ├── package.json     # Frontend dependencies
-> └── README.md            # Project documentation
 
 ## API Endpoints
 **User Authentication**
