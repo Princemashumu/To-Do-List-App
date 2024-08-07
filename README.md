@@ -103,6 +103,7 @@
 - Express.js
 - Material-UI
 - SQLite
+- Json Server
 
 ## Project UI(User Interface)
 ### Home Page
