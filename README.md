@@ -19,7 +19,7 @@
 4. Backend Setup
 5. Clone the repository:
 
-### Command Line Commands
+## Command Line Commands
 
 ### Clone the repository:
 > - [ ] sh
