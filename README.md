@@ -30,25 +30,25 @@
 > - [ ] Copy code
 > - [ ] cd backend
 > - [ ] npm install
-> - [ ]### Create an SQLite database and tables:
+### Create an SQLite database and tables:
 
 > - [ ] sh
 > - [ ] Copy code
 > - [ ] node setupDatabase.js
-> - [ ]### Start the backend server:
+### Start the backend server:
 
 > - [ ] sh
 > - [ ] Copy code
 > - [ ] npm start
-> - [ ]### The backend server should be running on http://localhost:5006.
+>### The backend server should be running on http://localhost:5006.
 
-> - [ ]### Frontend Setup
+### Frontend Setup
 > - [ ] Navigate to the frontend directory and install the dependencies:
 > - [ ] sh
 > - [ ] Copy code
 > - [ ] cd ../frontend
 > - [ ] npm install
-> - [ ]### Start the frontend development server: 
+>### Start the frontend development server: 
 > - [ ] sh
 > - [ ] Copy code
 > - [ ] npm start
