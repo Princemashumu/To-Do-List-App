@@ -53,7 +53,8 @@
 > - [ ] Copy code
 > - [ ] npm start
 > - [ ] The frontend should be running on http://localhost:3000.
-##
+
+
 ## API Endpoints
 **User Authentication**
 
